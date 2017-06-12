@@ -1,0 +1,41 @@
+{
+  "engines": {
+    "node": "7.8.0"
+  },
+  "name": "botbuilder-unit",
+  "version": "0.0.1",
+  "description": "Unit tests for chatbot dialogs",
+  "main": "botbuilder-unit.js",
+  "dependencies": {
+    "botbuilder": "^3.8.2",
+    "assert": "^1.4.1",
+    "jasmine": "^2.5.3",
+    "jasmine-terminal-reporter": "^1.0.3",
+    "node-uuid": "^1.4.8"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "node ./spec/runner.js ",
+    "test_debug": "node ./spec/runner.js --NODE_DEBUG=botbuilder"
+  },
+  "bugs": {
+    "url": "https://github.com/gudwin/botbuilder-unit/issues",
+    "email": "d@dd-team.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gudwin/botbuilder-unit.git"
+  },
+  "keywords": [
+    "botbuilder",
+    "jasmine",
+    "tdd",
+    "bdd",
+    "test",
+    "chatbot",
+    "mbf"
+  ],
+  "author": "Dmitry Shevchenko",
+  "license": "GNU 3.0"
+}
