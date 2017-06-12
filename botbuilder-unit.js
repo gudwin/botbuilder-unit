@@ -4,7 +4,7 @@ const MESSAGE_TIMEOUT = 20;
 function testBot(bot, messages, done) {
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
-      check[name](bot,done);
+      check[name](bot, args);
     }
   }
 
@@ -21,10 +21,7 @@ function testBot(bot, messages, done) {
       done = resolve;
     }
 
-    function checkInMessage(message, check, assert, callback) {
-      if (check.type) {
-        assert(message.type === check.type);
-      }
+    function checkInMessage(message, check, callback) {
 
       if (typeof check.in === 'function') {
         return check.in(bot, message, callback);
@@ -32,69 +29,79 @@ function testBot(bot, messages, done) {
         if (check.in) {
           let result = (check.in.test ? check.in.test(message.text) : message.text === check.in);
           let error = null;
-          if ( !result ) {
+          if (!result) {
             error = `<${message.text} does not match <${check.in}>`;
           }
           callback(error);
         } else {
           callback("No input message");
         }
-        return callback();
+
       }
     }
 
 
-    function proceedNextStep(done) {
+    function proceedNextStep() {
       if (step == messages.length) {
         console.log('SCRIPT FINISHED');
-        console.log( done );
         setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
         return;
       }
 
       if (messages[step].out) {
         let check = messages[step];
-        console.log(check);
-        step++;
+
         console.log(`Step: #${step}`);
         console.log('User >> ' + check.out);
-
+        step++;
         callTrigger(check, bot, 'before')
-        connector.processMessage(check.out);
-        callTrigger(check, bot, 'after')
+        let messagePromise = null;
+        if ("function" === typeof check.out) {
+          messagePromise = new Promise((resolve, reject) => {
+            check.out(bot, resolve, reject);
+          });
+
+        } else {
+          messagePromise = Promise.resolve(check.out);
+        }
+        messagePromise.then((message) => {
+          connector.processMessage(message);
+          callTrigger(check, bot, 'after');
+        }, (err) => {
+          throw err;
+        });
       }
 
     }
 
     bot.on('send', function (message) {
-        let inRange = (step > 0) && (step <= messages.length);
-        if (inRange) {
+      let inRange = (step > 0) && (step <= messages.length);
+      if (inRange) {
+        var check = messages[step];
+        console.log(`Step: #${step}`);
+        console.log(`BOT >> ${message.text}`);
+        step++;
 
-          var check = messages[step];
-
-          console.log(`Step: #${step}`);
-          console.log(`BOT >> ${message.text}`);
-
-          step++;
-
-          callTrigger(check, bot, 'before', message);
-          checkInMessage(message, check, assert, function (err) {
-            callTrigger(check, bot, 'after', err);
-            proceedNextStep( done);
-          });
-        }
-        else {
-          assert(false);
-          setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
-        }
+        callTrigger(check, bot, 'before', message);
+        checkInMessage(message, check, (err) => {
+          callTrigger(check, bot, 'after', err);
+          if (err) {
+            fail(err);
+            done();
+            return;
+          }
+          proceedNextStep();
+        });
       }
-    )
-    ;
+      else {
+        assert(false);
+        setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
+      }
+    });
     if (messages.length) {
-      proceedNextStep(done);
+      proceedNextStep();
     }
   })
-    ;
 }
 
 module.exports = testBot;

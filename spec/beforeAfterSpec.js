@@ -6,8 +6,9 @@ fdescribe('Before/After Test Suite', function () {
     let script = require('./scripts/beforeAfter');
 
     bot.dialog('/test', [
-      function (session) {
+      function (session,args, next) {
         session.send('Hello, World!');
+        next();
       },
       function ( session ) {
         session.endDialog('End of test dialog')

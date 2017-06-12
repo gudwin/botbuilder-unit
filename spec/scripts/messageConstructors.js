@@ -6,14 +6,18 @@ module.exports = [
     "in": 'Say hello?'
   },
   {
-    "out": function ( bot, session, done) {
+    "out": function (bot, done) {
       done('Hello world!');
     }
   },
   {
-    "in": function ( bot, session, done) {
-      expect(session.message.text).toBe('You typed: Hello world!');
-      done();
+    "in": function (bot, message, done) {
+      let fixture = 'You typed: Hello world!';
+      if (message.text == fixture) {
+        done();
+      } else {
+        done(`Failed to match message "${message.text}" to "${fixture}"`);
+      }
     }
   },
   {
