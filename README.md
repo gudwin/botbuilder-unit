@@ -106,4 +106,4 @@ module.exports = [
 
 #  Installation
 
-`npm install --save-dev
+``npm install --save-dev botbuilder-unit``
