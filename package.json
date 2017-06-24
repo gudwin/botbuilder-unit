@@ -3,7 +3,7 @@
     "node": "7.8.0"
   },
   "name": "botbuilder-unit",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Unit tests for chatbot dialogs",
   "main": "botbuilder-unit.js",
   "dependencies": {
@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test": "node ./spec/runner.js ",
-    "test_debug": "node ./spec/runner.js --NODE_DEBUG=botbuilder"
+    "test_debug": "export NODE_DEBUG=botbuilder; node ./spec/runner.js "
   },
   "bugs": {
     "url": "https://github.com/gudwin/botbuilder-unit/issues",

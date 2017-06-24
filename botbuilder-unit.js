@@ -60,12 +60,23 @@ function testBot(bot, messages, done) {
           messagePromise = new Promise((resolve, reject) => {
             check.out(bot, resolve, reject);
           });
-
         } else {
           messagePromise = Promise.resolve(check.out);
         }
         messagePromise.then((message) => {
-          connector.processMessage(message);
+          if ("object" == typeof message) {
+            if (!message.data.address) {
+              message.address({
+                channelId: 'console',
+                user: {id: 'user', name: 'User1'},
+                bot: {id: 'bot', name: 'Bot'},
+                conversation: {id: 'Convo1'}
+              });
+            }
+            connector.onEventHandler([message.toMessage()]);
+          } else {
+            connector.processMessage(message);
+          }
           callTrigger(check, bot, 'after');
         }, (err) => {
           throw err;
@@ -89,8 +100,9 @@ function testBot(bot, messages, done) {
             fail(err);
             done();
             return;
+          } else {
+            proceedNextStep();
           }
-          proceedNextStep();
         });
       }
       else {

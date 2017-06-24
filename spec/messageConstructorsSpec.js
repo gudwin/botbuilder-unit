@@ -1,7 +1,7 @@
 const botFactory = require('./botFactory');
 const unit = require('../');
 const builder = require('botbuilder');
-fdescribe('Message Constructors Suite:', function () {
+describe('Message Constructors Suite:', function () {
   it('Should support `in` and `out` attributes as message constructors', function (done) {
     let bot = botFactory();
     let script = require('./scripts/messageConstructors');

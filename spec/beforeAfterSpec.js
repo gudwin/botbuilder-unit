@@ -1,6 +1,6 @@
 const botFactory = require('./botFactory');
 const unit = require('../');
-fdescribe('Before/After Test Suite', function () {
+describe('Before/After Test Suite', function () {
   it('Should support `before` and `after` attributes', function (done) {
     let bot = botFactory();
     let script = require('./scripts/beforeAfter');

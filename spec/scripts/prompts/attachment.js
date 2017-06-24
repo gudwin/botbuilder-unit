@@ -7,15 +7,15 @@ module.exports = [
     "in": "Please upload an attachment",
   },
   {
-    "out": function (bot, session, done) {
-      let msg = new builder.Message().address(session.message.address);
+    "out": function (bot, done, reject) {
+      let msg = new builder.Message();
       msg.addAttachment({
         "name": "test",
         "contentType": "plain/text",
         "content": "Hello world"
       });
-      session.send(msg)
-      done();
+
+      done(msg);
     }
   },
   {

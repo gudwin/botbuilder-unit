@@ -10,7 +10,7 @@ module.exports = [
     "out": "2010-12-23"
   },
   {
-    "in": "Your response is:2010-12-23"
+    "in": "Your response is:2010-11-23" // https://www.w3schools.com/jsref/jsref_getmonth.asp
   },
   {
     "out": "hi"
@@ -20,13 +20,14 @@ module.exports = [
 
   },
   {
-    "out": "now"
+    "out": "today"
   },
   {
-    "in": function ( bot, message, done) {
-      let date = session.dialogData.response;
-      let expected = `Your response is:${date.getYear()}-${date.getMonth()}-${date.getDate()}`;
-      expect(session.dialogData.response).toBe( expected);
+    "in": function (bot, message, done) {
+      let date = new Date();
+      date = new Date();
+      let expected = `Your response is:${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+      expect(message.text).toBe(expected);
       done();
     }
   }

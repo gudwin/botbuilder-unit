@@ -9,6 +9,6 @@ module.exports = [
     "out": "no"
   },
   {
-    "in": "Your response is:false"
+    "in": "Your response is:no"
   }
 ];
