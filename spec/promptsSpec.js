@@ -16,7 +16,9 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
       });
     }
     bot.dialog('/test', waterfall)
-    unit(bot, script, done);
+    unit(bot, script).then( function () {
+      done();
+    });;
   }
   it('Should support Prompt.text', function (done) {
     test('text', done, function (session) {

@@ -1,9 +1,8 @@
 # botbuilder-unit
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
-The Library simulates conversation between bot and the end user. The Library 
-works on top of the Jasmine framework. 
+The Library simulates conversation between bot and the end user. 
 
-As input the Library requires a bot, lis
+As input the Library requires a bot, list of messages
 
 Unfortunately, development just started and documentation is not ready. So, 
 please study tests specifications. 
@@ -93,16 +92,16 @@ Create file **"spec/hiScript.js"**:
 ```javascript
 module.exports = [
   {
-    "out" : "hi"
+    "user" : "hi"
   },
   {
-    "in" :"How should I call you?"
+    "bot" :"How should I call you?"
   },
   {
-    "out" : "Timmy"
+    "user" : "Timmy"
   },
   {
-    "in" : "Nice to meet you, \"Timmy\"!"
+    "bot" : "Nice to meet you, \"Timmy\"!"
   }
 ]
 ```

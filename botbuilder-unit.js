@@ -1,7 +1,8 @@
 const assert = require('assert');
 const MESSAGE_TIMEOUT = 20;
 
-function testBot(bot, messages, done) {
+function testBot(bot, messages) {
+  let done = null;
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
       check[name](bot, args);
@@ -11,16 +12,9 @@ function testBot(bot, messages, done) {
   return new Promise(function (resolve, reject) {
     var step = 0;
     var connector = bot.connector('console');
-    if (done) {
-      let original = done;
-      done = () => {
-        original();
-        resolve();
-      };
-    } else {
-      done = resolve;
-    }
-
+    done = () => {
+      resolve();
+    };
     function checkInMessage(message, check, callback) {
 
       if (typeof check.bot === 'function') {

@@ -18,6 +18,8 @@ describe('Basic Test Suite: text in/out messages with user', function () {
       session.endDialog('TestB wialog welcomes you!')
     });
 
-    unit( bot, script, done );
+    unit( bot, script ).then( function () {
+      done();
+    });
   });
 })

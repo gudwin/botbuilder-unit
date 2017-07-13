@@ -15,6 +15,8 @@ describe('Message Constructors Suite:', function () {
       }
     ])
 
-    unit( bot, script, done );
+    unit( bot, script).then( function () {
+      done();
+    });
   });
 })
