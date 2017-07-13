@@ -110,3 +110,7 @@ module.exports = [
 #  Installation
 
 ``npm install --save-dev botbuilder-unit``
+
+# Change log
+- 0.2.0 - removed ambiguity with user and bot messages, using "user" and "bot" instead of "out" and "in"
+- 0.1.0 - initial version
