@@ -9,11 +9,11 @@
   "dependencies": {
     "botbuilder": "^3.8.2",
     "assert": "^1.4.1",
-    "jasmine": "^2.5.3",
-    "jasmine-terminal-reporter": "^1.0.3",
     "node-uuid": "^1.4.8"
   },
   "devDependencies": {
+    "jasmine": "^2.5.3",
+    "jasmine-terminal-reporter": "^1.0.3"
   },
   "scripts": {
     "test": "node ./spec/runner.js ",

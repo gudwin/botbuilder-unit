@@ -1,13 +1,13 @@
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
     "before": function ( bot) {
-      this.in = 'Hello, World!';
+      this.bot = 'Hello, World!';
     },
     "after": function ( bot) {
-      module.exports[2].in = "End of test dialog";
+      module.exports[2].bot = "End of test dialog";
     }
   },
   {}

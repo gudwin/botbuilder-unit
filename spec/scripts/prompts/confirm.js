@@ -1,14 +1,14 @@
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": "Please select yes or no"
+    "bot": "Please select yes or no"
   },
   {
-    "out": "no"
+    "user": "no"
   },
   {
-    "in": "Your response is:no"
+    "bot": "Your response is:no"
   }
 ];

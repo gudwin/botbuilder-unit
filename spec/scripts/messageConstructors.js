@@ -1,17 +1,17 @@
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": 'Say hello?'
+    "bot": 'Say hello?'
   },
   {
-    "out": function (bot, done) {
+    "user": function (bot, done) {
       done('Hello world!');
     }
   },
   {
-    "in": function (bot, message, done) {
+    "bot": function (bot, message, done) {
       let fixture = 'You typed: Hello world!';
       if (message.text == fixture) {
         done();
@@ -21,15 +21,15 @@ module.exports = [
     }
   },
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": 'Say hello?'
+    "bot": 'Say hello?'
   },
   {
-    "out": 'Hello MBF'
+    "user": 'Hello MBF'
   },
   {
-    "in": /MBF/i
+    "bot": /MBF/i
   }
 ];

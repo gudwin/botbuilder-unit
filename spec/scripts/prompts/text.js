@@ -1,14 +1,14 @@
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": "Please type any text"
+    "bot": "Please type any text"
   },
   {
-    "out": "Hello!"
+    "user": "Hello!"
   },
   {
-    "in": "Your response is:Hello!"
+    "bot": "Your response is:Hello!"
   }
 ];

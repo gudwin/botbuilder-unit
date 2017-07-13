@@ -1,14 +1,14 @@
 module.exports = [
   {
-    "out" : "hi"
+    "user" : "hi"
   },
   {
-    "in" :"How should I call you?"
+    "bot" :"How should I call you?"
   },
   {
-    "out" : "Timmy"
+    "user" : "Timmy"
   },
   {
-    "in" : "Nice to meet you, \"Timmy\"!"
+    "bot" : "Nice to meet you, \"Timmy\"!"
   }
 ]

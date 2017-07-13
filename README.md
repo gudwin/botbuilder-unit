@@ -1,6 +1,9 @@
 # botbuilder-unit
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
-The Library simulates conversation betwee bot and it's user.  
+The Library simulates conversation between bot and the end user. The Library 
+works on top of the Jasmine framework. 
+
+As input the Library requires a bot, lis
 
 Unfortunately, development just started and documentation is not ready. So, 
 please study tests specifications. 

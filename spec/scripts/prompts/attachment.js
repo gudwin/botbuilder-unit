@@ -1,13 +1,13 @@
 const builder = require('botbuilder');
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": "Please upload an attachment",
+    "bot": "Please upload an attachment",
   },
   {
-    "out": function (bot, done, reject) {
+    "user": function (bot, done, reject) {
       let msg = new builder.Message();
       msg.addAttachment({
         "name": "test",
@@ -19,6 +19,6 @@ module.exports = [
     }
   },
   {
-    "in": "Your response is:test:plain/text"
+    "bot": "Your response is:test:plain/text"
   }
 ];

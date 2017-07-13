@@ -1,14 +1,14 @@
 module.exports = [
   {
-    "out": "hi"
+    "user": "hi"
   },
   {
-    "in": "Please select any choice (1. red, 2. green, or 3. blue)"
+    "bot": "Please select any choice (1. red, 2. green, or 3. blue)"
   },
   {
-    "out": "blue"
+    "user": "blue"
   },
   {
-    "in": "Your response is:blue"
+    "bot": "Your response is:blue"
   }
 ];

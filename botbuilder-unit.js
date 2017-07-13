@@ -23,14 +23,14 @@ function testBot(bot, messages, done) {
 
     function checkInMessage(message, check, callback) {
 
-      if (typeof check.in === 'function') {
-        return check.in(bot, message, callback);
+      if (typeof check.bot === 'function') {
+        return check.bot(bot, message, callback);
       } else {
-        if (check.in) {
-          let result = (check.in.test ? check.in.test(message.text) : message.text === check.in);
+        if (check.bot) {
+          let result = (check.bot.test ? check.bot.test(message.text) : message.text === check.bot);
           let error = null;
           if (!result) {
-            error = `<${message.text} does not match <${check.in}>`;
+            error = `<${message.text} does not match <${check.bot}>`;
           }
           callback(error);
         } else {
@@ -48,20 +48,20 @@ function testBot(bot, messages, done) {
         return;
       }
 
-      if (messages[step].out) {
+      if (messages[step].user) {
         let check = messages[step];
 
         console.log(`Step: #${step}`);
-        console.log('User >> ' + check.out);
+        console.log('User >> ' + check.user);
         step++;
         callTrigger(check, bot, 'before')
         let messagePromise = null;
-        if ("function" === typeof check.out) {
+        if ("function" === typeof check.user) {
           messagePromise = new Promise((resolve, reject) => {
-            check.out(bot, resolve, reject);
+            check.user(bot, resolve, reject);
           });
         } else {
-          messagePromise = Promise.resolve(check.out);
+          messagePromise = Promise.resolve(check.user);
         }
         messagePromise.then((message) => {
           if ("object" == typeof message) {

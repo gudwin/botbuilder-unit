@@ -1,26 +1,26 @@
 module.exports = [
   {
-    "out" : "hi"
+    "user" : "hi"
   },
   {
-    "in" : "Test dialog welcomes you!"
+    "bot" : "Test dialog welcomes you!"
   },
   {
-    "in" : "TestB wialog welcomes you!"
+    "bot" : "TestB wialog welcomes you!"
   },
   {
-    "in" : "End of test dialog"
+    "bot" : "End of test dialog"
   },
   {
-    "out" : "hi"
+    "user" : "hi"
   },
   {
-    "in" : "Test dialog welcomes you!"
+    "bot" : "Test dialog welcomes you!"
   },
   {
-    "in" : "TestB wialog welcomes you!"
+    "bot" : "TestB wialog welcomes you!"
   },
   {
-    "in" : "End of test dialog"
+    "bot" : "End of test dialog"
   }
 ];
