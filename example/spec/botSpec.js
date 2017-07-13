@@ -13,6 +13,8 @@ describe('Simple test for a bot', () => {
   });
   it('Test welcome flow', (done) => {
     let messages = require('./hiScript');
-    unit(bot,messages,done)
+    unit(bot,messages).then(function () {
+      done();
+    })
   });
 });
