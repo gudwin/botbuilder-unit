@@ -28,7 +28,7 @@ function testBot(bot, messages) {
           }
           callback(error);
         } else {
-          callback("No input message");
+          callback(`No input message in:\n${JSON.stringify(check)}`);
         }
 
       }
