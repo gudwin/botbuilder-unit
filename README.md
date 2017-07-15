@@ -1,8 +1,50 @@
 # botbuilder-unit
+## Glossary
+- **script** - an array of messages describing flow of conversation with a bot;
+
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
 The Library simulates conversation between bot and the end user. 
 
-As input the Library requires a bot, list of messages
+As input the Library requires a bot and a script
+
+# Script 
+
+The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot.
+
+If the message is from the user, than message object should look like this:
+
+```javascript
+{
+    "user" : "Hey there!"
+}
+```
+
+In case, if the message is from the bot, than:
+ 
+```javascript
+{
+    "bot" : "Hello world!"
+}
+```
+ 
+## Example of the Script
+
+```javascript
+[
+    {
+        "user" : "Hi"
+    },
+    {
+        "bot" : "Welcome back!"
+    },
+    {
+        "bot" : "Hey, now early morning"
+    }
+    {
+        "bot" : "Should I prepare a double of coffee for you?"
+    }
+]
+```
 
 Unfortunately, development just started and documentation is not ready. So, 
 please study tests specifications. 
@@ -12,10 +54,11 @@ please study tests specifications.
 # Quick Start
 
 ## Install library
-``npm install --save-dev botbuilder-unit``
+
+`npm install --save-dev botbuilder-unit`
 ## Install jasmine libraries
-``npm install --save-dev jasmine``
-``npm install --save-dev jasmine-terminal-reporter``
+`npm install --save-dev jasmine`
+`npm install --save-dev jasmine-terminal-reporter`
 
 ## Create Test Specification
 
@@ -110,8 +153,9 @@ module.exports = [
 
 #  Installation
 
-``npm install --save-dev botbuilder-unit``
+`npm install --save-dev botbuilder-unit`
 
 # Change log
+- 0.2.2 - updated error messages in case if current message in script does not matching pattern for a bot's message
 - 0.2.0 - removed ambiguity with user and bot messages, using "user" and "bot" instead of "out" and "in"
 - 0.1.0 - initial version
