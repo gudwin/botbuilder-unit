@@ -1,8 +1,10 @@
 const assert = require('assert');
 const MESSAGE_TIMEOUT = 20;
+const NEXT_USER_MESSAGE_TIMEOUT = 1000;
 
 function testBot(bot, messages) {
   let done = null;
+
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
       check[name](bot, args);
@@ -15,7 +17,7 @@ function testBot(bot, messages) {
     done = () => {
       resolve();
     };
-    function checkInMessage(message, check, callback) {
+    function checkBotMessage(message, check, callback) {
 
       if (typeof check.bot === 'function') {
         return check.bot(bot, message, callback);
@@ -75,6 +77,12 @@ function testBot(bot, messages) {
         }, (err) => {
           throw err;
         });
+        if ( step <= messages.length && (messages[step].user) ) {
+          setTimeout( function () {
+            proceedNextStep();
+          }, NEXT_USER_MESSAGE_TIMEOUT)
+
+        }
       }
 
     }
@@ -88,7 +96,7 @@ function testBot(bot, messages) {
         step++;
 
         callTrigger(check, bot, 'before', message);
-        checkInMessage(message, check, (err) => {
+        checkBotMessage(message, check, (err) => {
           callTrigger(check, bot, 'after', err);
           if (err) {
             fail(err);

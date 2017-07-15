@@ -9,7 +9,7 @@ As input the Library requires a bot and a script
 
 # Script 
 
-The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot.
+The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user.
 
 If the message is from the user, than message object should look like this:
 
@@ -156,6 +156,7 @@ module.exports = [
 `npm install --save-dev botbuilder-unit`
 
 # Change log
+- 0.2.3 - fixed error with case then multiple messages from users awaited
 - 0.2.2 - updated error messages in case if current message in script does not matching pattern for a bot's message
 - 0.2.0 - removed ambiguity with user and bot messages, using "user" and "bot" instead of "out" and "in"
 - 0.1.0 - initial version
