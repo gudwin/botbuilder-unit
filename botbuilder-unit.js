@@ -1,6 +1,6 @@
-const assert = require('assert');
 const MESSAGE_TIMEOUT = 20;
 const NEXT_USER_MESSAGE_TIMEOUT = 1000;
+
 
 function testBot(bot, messages) {
   let done = null;
@@ -18,21 +18,30 @@ function testBot(bot, messages) {
       resolve();
     };
     function checkBotMessage(message, check, callback) {
-
-      if (typeof check.bot === 'function') {
-        return check.bot(bot, message, callback);
-      } else {
-        if (check.bot) {
-          let result = (check.bot.test ? check.bot.test(message.text) : message.text === check.bot);
-          let error = null;
-          if (!result) {
-            error = `<${message.text} does not match <${check.bot}>`;
-          }
-          callback(error);
+      if ( check.bot ) {
+        console.log(`BOT: >> ${message.text}`);
+        if (typeof check.bot === 'function') {
+          return check.bot(bot, message, callback);
         } else {
-          callback(`No input message in:\n${JSON.stringify(check)}`);
+          if (check.bot) {
+            let result = (check.bot.test ? check.bot.test(message.text) : message.text === check.bot);
+            let error = null;
+            if (!result) {
+              error = `<${message.text} does not match <${check.bot}>`;
+            }
+            callback(error);
+          } else {
+            callback(`No input message in:\n${JSON.stringify(check)}`);
+          }
         }
-
+      } else if ( check.endConversation ) {
+        console.log(`BOT: >> endConversation`);
+        callback();
+      } else if ( check.typing ) {
+        console.log(`BOT: >> typing`);
+        callback();
+      } else {
+        throw new Error(`Unknown message from bot:\n${JSON.stringify(check)}`);
       }
     }
 
@@ -48,7 +57,7 @@ function testBot(bot, messages) {
         let check = messages[step];
 
         console.log(`Step: #${step}`);
-        console.log('User >> ' + check.user);
+        console.log('User: >> ' + check.user);
         step++;
         callTrigger(check, bot, 'before')
         let messagePromise = null;
@@ -88,13 +97,13 @@ function testBot(bot, messages) {
     }
 
     bot.on('send', function (message) {
-      let inRange = (step > 0) && (step <= messages.length);
+      let inRange = (step > 0) && (step < messages.length);
       if (inRange) {
         var check = messages[step];
         console.log(`Step: #${step}`);
-        console.log(`BOT >> ${message.text}`);
         step++;
-
+        console.log()
+        console.log(check);
         callTrigger(check, bot, 'before', message);
         checkBotMessage(message, check, (err) => {
           callTrigger(check, bot, 'after', err);
@@ -108,7 +117,7 @@ function testBot(bot, messages) {
         });
       }
       else {
-        assert(false);
+        console.log('Bot: >>Ignoring message');
         setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
       }
     });

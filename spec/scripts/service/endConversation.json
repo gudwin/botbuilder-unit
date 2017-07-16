@@ -1,0 +1,17 @@
+[
+  {
+    "user": "Hi"
+  },
+  {
+    "bot": "Hello world!"
+  },
+  {
+    "endConversation" : true
+  },
+  {
+    "user": "Hi"
+  },
+  {
+    "bot": "Hello world!"
+  }
+]
