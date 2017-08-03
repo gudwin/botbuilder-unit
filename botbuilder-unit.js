@@ -27,7 +27,7 @@ function testBot(bot, messages) {
             let result = (check.bot.test ? check.bot.test(message.text) : message.text === check.bot);
             let error = null;
             if (!result) {
-              error = `<${message.text} does not match <${check.bot}>`;
+              error = `<${message.text}> does not match <${check.bot}>`;
             }
             callback(error);
           } else {
@@ -41,7 +41,7 @@ function testBot(bot, messages) {
         console.log(`BOT: >> typing`);
         callback();
       } else {
-        throw new Error(`Unknown message from bot:\n${JSON.stringify(check)}`);
+        throw new Error(`Unknown message from bot:${JSON.stringify(check)}`);
       }
     }
 
