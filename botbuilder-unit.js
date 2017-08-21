@@ -19,7 +19,11 @@ function testBot(bot, messages) {
     };
     function checkBotMessage(message, check, callback) {
       if ( check.bot ) {
-        console.log(`BOT: >> ${message.text}`);
+        if ( message.text ) {
+          console.log(`BOT: >> ${(message.text)}`);
+        } else {
+          console.log(`BOT: >> ${JSON.stringify(message)}`);
+        }
         if (typeof check.bot === 'function') {
           return check.bot(bot, message, callback);
         } else {
@@ -41,7 +45,7 @@ function testBot(bot, messages) {
         console.log(`BOT: >> typing`);
         callback();
       } else {
-        throw new Error(`Unknown message from bot:${JSON.stringify(check)}`);
+        throw new Error(`Unable to find matching validator for step #${step}. Step:\n${JSON.stringify(check)}`);
       }
     }
 
