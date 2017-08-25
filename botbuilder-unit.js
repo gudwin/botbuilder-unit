@@ -4,7 +4,7 @@ const NEXT_USER_MESSAGE_TIMEOUT = 1000;
 
 function testBot(bot, messages) {
   let done = null;
-
+  let fail = null;
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
       check[name](bot, args);
@@ -17,6 +17,10 @@ function testBot(bot, messages) {
     done = () => {
       resolve();
     };
+    fail = ( err ) => {
+      reject( err );
+    }
+
     function checkBotMessage(message, check, callback) {
       if ( check.bot ) {
         if ( message.text ) {
@@ -31,7 +35,7 @@ function testBot(bot, messages) {
             let result = (check.bot.test ? check.bot.test(message.text) : message.text === check.bot);
             let error = null;
             if (!result) {
-              error = `<${message.text}> does not match <${check.bot}>`;
+              error = `[Error on step - ${step}]  <${message.text}> does not match <${check.bot}>`;
             }
             callback(error);
           } else {
@@ -105,16 +109,13 @@ function testBot(bot, messages) {
       if (inRange) {
         var check = messages[step];
         console.log(`Step: #${step}`);
-        step++;
-        console.log()
         console.log(check);
+        step++;
         callTrigger(check, bot, 'before', message);
         checkBotMessage(message, check, (err) => {
           callTrigger(check, bot, 'after', err);
           if (err) {
             fail(err);
-            done();
-            return;
           } else {
             proceedNextStep();
           }
