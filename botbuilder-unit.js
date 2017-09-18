@@ -2,7 +2,7 @@
 
 const FINISH_TIMEOUT = 20;
 const NEXT_USER_MESSAGE_TIMEOUT = 20;
-const DEFAULT_TEST_TIMEOUT = 6000;
+const DEFAULT_TEST_TIMEOUT = 10000;
 
 
 function testBot(bot, messages, options ) {
@@ -118,37 +118,41 @@ function testBot(bot, messages, options ) {
       }
     }
     function setupTimeout() {
-      setTimeout( () => {
-        fail(`Default timeout (${options.timeout}) exceeded`);
-      }, options.timeout );
+      if ( options.timeout ) {
+        setTimeout( () => {
+          fail(`Default timeout (${options.timeout}) exceeded`);
+        }, options.timeout );
+      }
+    }
+    function setupReplyReceiver() {
+      bot.on('send', function (message) {
+        let inRange = (step > 0) && (step < messages.length);
+        _d('log')(`Step: #${step}\nReceived message from bot:`);
+
+        if (inRange) {
+          var check = messages[step];
+          _d('log')(check);
+          _d('log')('Iterating to next step from bot message');;
+          step++;
+          callTrigger(check, bot, 'before', message);
+          checkBotMessage(message, check, (err) => {
+            callTrigger(check, bot, 'after', err);
+            if (err) {
+              fail(err);
+            } else {
+              proceedNextStep();
+            }
+          });
+        }
+        else {
+          _d('log')('Bot: >>Ignoring message (Out of Range)');
+          setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
+        }
+      });
     }
 
-    bot.on('send', function (message) {
-      let inRange = (step > 0) && (step < messages.length);
-      _d('log')(`Step: #${step}\nReceived message from bot:`);
-
-      if (inRange) {
-        var check = messages[step];
-        _d('log')(check);
-        _d('log')('Iterating to next step from bot message');;
-        step++;
-        callTrigger(check, bot, 'before', message);
-        checkBotMessage(message, check, (err) => {
-          callTrigger(check, bot, 'after', err);
-          if (err) {
-            fail(err);
-          } else {
-            proceedNextStep();
-          }
-        });
-      }
-      else {
-        _d('log')('Bot: >>Ignoring message (Out of Range)');
-        setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
-      }
-    });
-
     setupTimeout();
+    setupReplyReceiver();
     startTesting();
   })
 }
