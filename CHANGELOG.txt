@@ -1,0 +1,19 @@
+--------------------------------
+v 0.3.0
+
+HIGHLIGHTS:
+- new output log;
+- colored output (disabled by default);
+- support for test timeout;
+- session state management support;
+- support for random messages;
+
+Changes: new  attribute for testing function - options:
+             unit(bot, script, options );
+options = {
+    timeout : value
+}
+- int timeout, by default equal to 60000.
+  Fails the test, if time since the test started exceeds the value of attribute;
+
+
