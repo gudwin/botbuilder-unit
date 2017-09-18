@@ -1,10 +1,13 @@
-const MESSAGE_TIMEOUT = 20;
-const NEXT_USER_MESSAGE_TIMEOUT = 1000;
+"use strict";
+
+const FINISH_TIMEOUT = 20;
+const NEXT_USER_MESSAGE_TIMEOUT = 20;
+const DEFAULT_TEST_TIMEOUT = 6000;
 
 
-function testBot(bot, messages) {
-  let done = null;
-  let fail = null;
+function testBot(bot, messages, options ) {
+  options = Object.assign({timeout : DEFAULT_TEST_TIMEOUT }, options );
+
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
       check[name](bot, args);
@@ -14,19 +17,20 @@ function testBot(bot, messages) {
   return new Promise(function (resolve, reject) {
     var step = 0;
     var connector = bot.connector('console');
-    done = () => {
+    function done () {
       resolve();
     };
-    fail = ( err ) => {
+    function fail ( err ) {
       reject( err );
     }
 
     function checkBotMessage(message, check, callback) {
+
       if ( check.bot ) {
         if ( message.text ) {
-          console.log(`BOT: >> ${(message.text)}`);
+          _d('log')(`BOT: >> ${(message.text)}`);
         } else {
-          console.log(`BOT: >> ${JSON.stringify(message)}`);
+          _d('log')(`BOT: >> ${JSON.stringify(message)}`);
         }
         if (typeof check.bot === 'function') {
           return check.bot(bot, message, callback);
@@ -43,29 +47,28 @@ function testBot(bot, messages) {
           }
         }
       } else if ( check.endConversation ) {
-        console.log(`BOT: >> endConversation`);
+        _d('log')(`BOT: >> endConversation`);
         callback();
       } else if ( check.typing ) {
-        console.log(`BOT: >> typing`);
+        _d('log')(`BOT: >> typing`);
         callback();
       } else {
         throw new Error(`Unable to find matching validator for step #${step}. Step:\n${JSON.stringify(check)}`);
       }
     }
-
-
     function proceedNextStep() {
       if (step == messages.length) {
-        console.log('SCRIPT FINISHED');
-        setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
+        _d('log')('SCRIPT FINISHED');
+        setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
         return;
       }
 
       if (messages[step].user) {
         let check = messages[step];
 
-        console.log(`Step: #${step}`);
-        console.log('User: >> ' + check.user);
+        _d('log')(`Step: #${step}`);
+        _d('log')('User: >> ' + check.user);
+        _d('log')('Iterating to next step from user message');;
         step++;
         callTrigger(check, bot, 'before')
         let messagePromise = null;
@@ -103,13 +106,31 @@ function testBot(bot, messages) {
       }
 
     }
+    function startTesting() {
+      if (messages.length) {
+        let intro = '';
+        messages.forEach( ( item, i ) => {
+          intro = intro + (`${i}: ${JSON.stringify(item)}\n`);
+        })
+        //
+        _d('log')(intro);
+        proceedNextStep();
+      }
+    }
+    function setupTimeout() {
+      setTimeout( () => {
+        fail(`Default timeout (${options.timeout}) exceeded`);
+      }, options.timeout );
+    }
 
     bot.on('send', function (message) {
       let inRange = (step > 0) && (step < messages.length);
+      _d('log')(`Step: #${step}\nReceived message from bot:`);
+
       if (inRange) {
         var check = messages[step];
-        console.log(`Step: #${step}`);
-        console.log(check);
+        _d('log')(check);
+        _d('log')('Iterating to next step from bot message');;
         step++;
         callTrigger(check, bot, 'before', message);
         checkBotMessage(message, check, (err) => {
@@ -122,14 +143,22 @@ function testBot(bot, messages) {
         });
       }
       else {
-        console.log('Bot: >>Ignoring message');
-        setTimeout(done, MESSAGE_TIMEOUT); // Enable message from connector to appear in current test suite
+        _d('log')('Bot: >>Ignoring message (Out of Range)');
+        setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
       }
     });
-    if (messages.length) {
-      proceedNextStep();
-    }
+
+    setupTimeout();
+    startTesting();
   })
+}
+
+testBot.dependencies = {
+  log : console.log
+}
+function _d( name ) {
+  return testBot.dependencies[name];
+
 }
 
 module.exports = testBot;
