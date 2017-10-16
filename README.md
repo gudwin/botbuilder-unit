@@ -1,6 +1,6 @@
 # botbuilder-unit
 ## Glossary
-- **script** - an array of messages describing flow of conversation with a bot;
+- **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
 
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
 The Library simulates conversation between bot and the end user. 
@@ -9,7 +9,7 @@ As input the Library requires a bot and a script
 
 # Script 
 
-The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user.
+The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
 
 If the message is from the user, than message object should look like this:
 
@@ -155,7 +155,29 @@ module.exports = [
 
 `npm install --save-dev botbuilder-unit`
 
-# Change log
+# Configuration
+ 
+## Conversation level
+
+## Message level
+
+# Mocking conversation
+ 
+ If you want to "prototype" conversation flow and see how it looks and feels and only after that to start actual development, than you will need **ConversationMock** class. 
+ There is a class that allow you to quickly build conversation flows and integrate them with conversation specs.   
+
+## ConversationMock 
+
+### new ConversationMock( steps ) 
+ Where **steps** is a list of callbacks
+ 
+ **Prototype**
+-------------- 
+ 
+- getListener() returns a listener for WaterfallDialog
+
+# Changelog
+- 0.3.0 - new output log, timeout support
 - 0.2.3 - fixed error with case then multiple messages from users awaited
 - 0.2.2 - updated error messages in case if current message in script does not matching pattern for a bot's message
 - 0.2.0 - removed ambiguity with user and bot messages, using "user" and "bot" instead of "out" and "in"

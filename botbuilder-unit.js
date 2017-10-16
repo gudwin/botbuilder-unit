@@ -101,9 +101,10 @@ function testBot(bot, messages, options) {
     function setupReplyReceiver() {
       bot.on('send', function (message) {
         _d('log')(`Step: #${step}\nReceived message from bot:`);
-
+        _d('log')(message);
         if (messages.length) {
           var check = messages.shift();
+          _d('log')('Expecting:');
           _d('log')(check);
           _d('log')('--');
           step++;
@@ -139,3 +140,4 @@ function _d(name) {
 }
 
 module.exports = testBot;
+module.exports.ConversationMock = require('./src/ConversationMock');
