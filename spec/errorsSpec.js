@@ -19,7 +19,7 @@ describe('Errors Test', function () {
     unit(bot, script).then(function () {
 
     }, function (err ) {
-      expect(err).toBe('[Error on step - 2]  <Hello world!> does not match <hi!>');
+      expect(err).toBe('<Hello world!> does not match <hi!>');
       done();
     });
   });

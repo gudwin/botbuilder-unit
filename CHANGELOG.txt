@@ -1,19 +1,31 @@
 --------------------------------
 v 0.3.0
 
+
+
 HIGHLIGHTS:
-- new output log;
-- colored output (disabled by default);
-- support for test timeout;
-- session state management support;
-- support for random messages;
+- [NO]colored output (disabled by default);
+- [OK] callbacks changed to Promises
+- [OK] support for test timeout;
+- [IN PROGRESS]new output log;
+- [NO]session state management support;
+- [NO]support for random messages;
+- [NO]debugging steps added: showSession, showDialogStack
+- [NO]support for conversation started by bot
+
+INCOMPATIBILITIES
+
+- new list of arguments for "before" and "after" callbacks: config, bot;
+- "before" and "after" should return a promise which will resolve or reject a current step;
+- "user" and "bot" in case, if they are callbacks, should return promise, callback removed from arguments
+
 
 Changes: new  attribute for testing function - options:
              unit(bot, script, options );
 options = {
     timeout : value
 }
-- int timeout, by default equal to 60000.
+- int timeout, by default equal to 60000, zero value equals to infinity.
   Fails the test, if time since the test started exceeds the value of attribute;
 
 

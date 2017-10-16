@@ -6,17 +6,17 @@ module.exports = [
     "bot": 'Say hello?'
   },
   {
-    "user": function (bot, done) {
-      done('Hello world!');
+    "user": function (bot) {
+      return Promise.resolve('Hello world!');
     }
   },
   {
     "bot": function (bot, message, done) {
       let fixture = 'You typed: Hello world!';
       if (message.text == fixture) {
-        done();
+        return Promise.resolve();
       } else {
-        done(`Failed to match message "${message.text}" to "${fixture}"`);
+        return Promise.reject(`Failed to match message "${message.text}" to "${fixture}"`);
       }
     }
   },

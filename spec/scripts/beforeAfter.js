@@ -1,14 +1,18 @@
-module.exports = [
+let targetMessage = {};
+let result = [
   {
     "user": "hi"
   },
   {
-    "before": function ( bot) {
+    "before": function ( config, bot) {
       this.bot = 'Hello, World!';
+      return Promise.resolve();
     },
-    "after": function ( bot) {
-      module.exports[2].bot = "End of test dialog";
+    "after": function ( config, bot) {
+      targetMessage.bot = "End of test dialog";
+      return Promise.resolve();
     }
   },
-  {}
-];
+  targetMessage
+]
+module.exports = result;

@@ -1,7 +1,7 @@
 const botFactory = require('./botFactory');
 const unit = require('../');
-describe('Basic Test Suite: text in/out messages with user', function () {
-  it('Should support `in` and `out` attributes', function (done) {
+describe('Basic Test Suite: text user/bot messages with user', function () {
+  it('Should support `user` and `bot` attributes', function (done) {
     let bot = botFactory();
     let script = require('./scripts/base');
 

@@ -3,7 +3,7 @@
     "node": "7.8.0"
   },
   "name": "botbuilder-unit",
-  "version": "0.2.7",
+  "version": "0.3.0",
   "description": "Unit tests for chatbot dialogs",
   "main": "botbuilder-unit.js",
   "dependencies": {
@@ -11,10 +11,13 @@
   },
   "devDependencies": {
     "jasmine": "^2.5.3",
-    "jasmine-terminal-reporter": "^1.0.3"
+    "jasmine-terminal-reporter": "^1.0.3",
+    "gulp": "^3.9.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-watch": "^4.3.11"
   },
   "scripts": {
-    "test": "node ./spec/runner.js ",
+    "test": "gulp tests ",
     "test_debug": "export NODE_DEBUG=botbuilder; node ./spec/runner.js "
   },
   "bugs": {

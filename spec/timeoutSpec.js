@@ -6,7 +6,6 @@ describe('Timeout test suite', function () {
 
   beforeEach((done) =>{
     try {
-
       jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
       bot = botFactory();
       bot.dialog('/test', [

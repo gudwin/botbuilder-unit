@@ -7,7 +7,7 @@ module.exports = [
     "bot": "Please upload an attachment",
   },
   {
-    "user": function (bot, done, reject) {
+    "user": function (bot ) {
       let msg = new builder.Message();
       msg.addAttachment({
         "name": "test",
@@ -15,7 +15,7 @@ module.exports = [
         "content": "Hello world"
       });
 
-      done(msg);
+      return Promise.resolve(msg);
     }
   },
   {
