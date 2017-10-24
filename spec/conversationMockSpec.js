@@ -5,9 +5,6 @@ describe('Test Suite for Conversation Mock class', function () {
     let bot = botFactory();
     let mock = new unit.ConversationMock([
       (session, args, next) => {
-        console.trace();
-        console.log('[[arguments]]')
-        console.log(arguments)
         session.send('Hello!');
         next()
       },
@@ -57,5 +54,4 @@ describe('Test Suite for Conversation Mock class', function () {
       done();
     })
   });
-
 })
