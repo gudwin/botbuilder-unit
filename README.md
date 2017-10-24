@@ -169,12 +169,12 @@ module.exports = [
 ## ConversationMock 
 
 ### new ConversationMock( steps ) 
- Where **steps** is a list of callbacks
+ Where **steps** is an array of standard waterfall dialog functions. Each step will be executed only once. The Library will pass standard arguments: __session__, __arguments__,__next__ into step.  
  
  **Prototype**
 -------------- 
  
-- getListener() returns a listener for WaterfallDialog
+- getListener() returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
 
 # Changelog
 - 0.3.0 - new output log, timeout support
