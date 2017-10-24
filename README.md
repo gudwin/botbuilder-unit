@@ -114,7 +114,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 var Jasmine = require('jasmine');
 var jasmine = new Jasmine();
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 50000;
+jasmine.jasmine.DEFAULT_TIMEOUT_INTERVAL = 50000;
 jasmine.loadConfigFile('./spec/support/jasmine.json');
 jasmine.configureDefaultReporter({
   showColors: true
