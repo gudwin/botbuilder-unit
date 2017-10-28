@@ -6,7 +6,7 @@ const FINISH_TIMEOUT = 20;
 const NEXT_USER_MESSAGE_TIMEOUT = 20;
 const DEFAULT_TEST_TIMEOUT = 10000;
 
-const MessageFactory = require('./src/MessageFactory');
+const MessageFactory = require('./src/message-factories/MessageFactory');
 
 function testBot(bot, messages, options) {
   options = Object.assign({timeout: DEFAULT_TEST_TIMEOUT}, options);
@@ -31,7 +31,7 @@ function testBot(bot, messages, options) {
     }
 
     function checkBotMessage(message, check, doneCallback) {
-      MessageFactory.factory(check, bot, _d('log'))
+      MessageFactory.produce(check, bot, _d('log'))
         .validate( message )
         .then(() => {
           doneCallback();
@@ -50,10 +50,9 @@ function testBot(bot, messages, options) {
 
       if (messages[0].user) {
         let messageConfig = messages.shift();
-        _d('log')(`Step: #${step}`);
         step++;
 
-        MessageFactory.factory(messageConfig, bot, _d('log'))
+        MessageFactory.produce(messageConfig, bot, _d('log'))
           .send(messageConfig)
           .then(function () {
             if (messages.length && (messages[0].user)) {

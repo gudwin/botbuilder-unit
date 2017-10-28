@@ -2,11 +2,11 @@
 
 const UserMessage = require('../messages/UserMessage');
 
-function UserMessageCreator() {
+function UserMessageFactory() {
 
 }
-UserMessageCreator.factory = function ( config, bot, logger ) {
+UserMessageFactory.produce = function ( config, bot, logger ) {
   return new UserMessage( config, bot, logger, bot.connector('console'));
 }
 
-module.exports = UserMessageCreator;
+module.exports = UserMessageFactory;
