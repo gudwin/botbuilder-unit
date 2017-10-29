@@ -8,6 +8,8 @@ const MessageFactory = require('./src/message-factories/MessageFactory');
 const PlainLogReporter = require('./src/log-reporters/PlainLogReporter');
 const EmptyLogReporter = require('./src/log-reporters/EmptyLogReporter');
 const BeautyLogReporter = require('./src/log-reporters/BeautyLogReporter');
+const BotMessage = require('./src/messages/BotMessage');
+const UserMessage = require('./src/messages/UserMessage');
 
 function getLogReporter() {
   return module.exports.config.reporter;
@@ -58,14 +60,20 @@ function testBot(bot, messages, options) {
     }
 
     function checkBotMessage(message, check, doneCallback) {
-      MessageFactory.produce(check, bot, getLogReporter())
-        .validate(step -1, message)
-        .then(() => {
-          doneCallback();
-        })
-        .catch((err) => {
-          doneCallback(err);
-        });
+      let validationMessage=  MessageFactory.produce(check, bot, getLogReporter());
+      if ( validationMessage instanceof BotMessage ) {
+        validationMessage.validate(step -1, message)
+          .then(() => {
+            doneCallback();
+          })
+          .catch((err) => {
+            doneCallback(err);
+          });
+      } else {
+        getLogReporter().expectationError( step, message,check);
+        doneCallback(`STEP #${step}, Active message in a script not a BotMessage. `)
+      }
+
     }
 
     function next() {
@@ -155,3 +163,5 @@ module.exports.config = {
 module.exports.PlainLogReporter = PlainLogReporter;
 module.exports.BeautyLogReporter = BeautyLogReporter;
 module.exports.ConversationMock = require('./src/ConversationMock');
+module.exports.BotMessage = BotMessage;
+module.exports.UserMessage = UserMessage;

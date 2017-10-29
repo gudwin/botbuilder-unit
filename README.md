@@ -18,46 +18,6 @@ The Library simulates conversation between bot and the end user.
 
 As input the Library requires a bot and a script
 
-# Script 
-
-The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
-
-If the message is from the user, than message object should look like this:
-
-```javascript
-{
-    "user" : "Hey there!"
-}
-```
-
-In case, if the message is from the bot, than:
- 
-```javascript
-{
-    "bot" : "Hello world!"
-}
-```
- 
-## Example of the Script
-
-```javascript
-[
-    {
-        "user" : "Hi"
-    },
-    {
-        "bot" : "Welcome back!"
-    },
-    {
-        "bot" : "Hey, now early morning"
-    }
-    {
-        "bot" : "Should I prepare a double of coffee for you?"
-    }
-]
-```
-  
-
 # Quick Start
 
 ![Script output for sample script](https://github.com/gudwin/botbuilder-unit/blob/master/examples/example-of-beauty-log.png?raw=true)
@@ -136,6 +96,43 @@ The library exposes `config` object in module.exports. Properties of an object:
 
 ## Script level
 
+The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
+
+If the message is from the user, than message object should look like this:
+
+```javascript
+{
+    "user" : "Hey there!"
+}
+```
+
+In case, if the message is from the bot, than:
+ 
+```javascript
+{
+    "bot" : "Hello world!"
+}
+```
+ 
+### Example of the Script
+
+```javascript
+[
+    {
+        "user" : "Hi"
+    },
+    {
+        "bot" : "Welcome back!"
+    },
+    {
+        "bot" : "Hey, now early morning"
+    }
+    {
+        "bot" : "Should I prepare a double of coffee for you?"
+    }
+]
+```
+
 # Mocking conversation
  
  If you want to "prototype" conversation flow and see how it looks and feels and only after that to start actual development, than you will need **ConversationMock** class. 
@@ -147,7 +144,6 @@ The library exposes `config` object in module.exports. Properties of an object:
  Where **steps** is an array of standard waterfall dialog functions. Each step will be executed only once. The Library will pass standard arguments: __session__, __arguments__,__next__ into step.  
  
  **Prototype**
--------------- 
  
 - getListener() returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
 
