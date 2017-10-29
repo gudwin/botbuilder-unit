@@ -1,7 +1,7 @@
-function BotMessage(config, bot, logger) {
+function BotMessage(config, bot, logReporter) {
   this.config = config;
   this.bot = bot;
-  this.logger = logger;
+  this.logReporter = logReporter;
   this.beforeFunc = this.config.before || function () {
       return Promise.resolve();
     }
@@ -9,16 +9,13 @@ function BotMessage(config, bot, logger) {
       return Promise.resolve();
     };
 }
-BotMessage.prototype.validate = function (receivedMessage) {
+BotMessage.prototype.validate = function (step, receivedMessage) {
   return new Promise((resolve, reject) => {
-    if (receivedMessage.text) {
-      this.logger(`BOT: >> ${(receivedMessage.text)}`);
-    } else {
-      this.logger(`BOT: >> ${JSON.stringify(receivedMessage)}`);
-    }
     this.beforeFunc(this.config, this.bot)
       .then(() => {
-        if (this.config.bot) {
+
+        if ("undefined" != typeof this.config.bot) {
+          this.logReporter.messageReceived(step, receivedMessage);
           if (typeof this.config.bot === 'function') {
             return this.config.bot(this.bot, receivedMessage);
           }
@@ -26,23 +23,28 @@ BotMessage.prototype.validate = function (receivedMessage) {
             if (this.config.bot) {
               let result = (this.config.bot.test ? this.config.bot.test(receivedMessage.text) : receivedMessage.text === this.config.bot);
               if (!result) {
-                error = `<${receivedMessage.text}> does not match <${this.config.bot}>`;
+                this.logReporter.expectationError(step, receivedMessage, this.config);
+                error = `Step #${step}, <${receivedMessage.text}> does not match <${this.config.bot}>`;
                 reject(error);
               }
             }
             else {
-              reject(`No input message in:\n${JSON.stringify(this.config)}`);
+              let msg = `No input message in step configuration:\n${JSON.stringify(this.config)}`
+              this.logReporter.error(step, msg );
+              reject(msg);
             }
             return true;
           }
         } else if (this.config.endConversation) {
-          this.logger(`BOT: >> endConversation`);
+          this.logReporter.endConversation(step);
           return true;
         } else if (this.config.typing) {
-          this.logger(`BOT: >> typing`);
+          this.logReporter.typing(step);
           return true;
         } else {
-          reject(`Unable to find matching validator. Step config:\n${JSON.stringify(this.config)}`);
+          let msg = `Unable to find matching validator. Step config:\n${JSON.stringify(this.config)}`;
+          this.logReporter.error(step, msg );
+          reject(msg);
         }
       })
       .then(() => {

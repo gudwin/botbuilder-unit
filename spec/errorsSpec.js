@@ -16,10 +16,12 @@ describe('Errors Test', function () {
     ])
 
 
-    unit(bot, script).then(function () {
+    unit(bot, script,{
+      title : 'Will raise an error if messages do not match'
+    }).then(function () {
 
     }, function (err ) {
-      expect(err).toBe('<Hello world!> does not match <hi!>');
+      expect(err).toBe('Step #1, <Hello world!> does not match <hi!>');
       done();
     });
   });

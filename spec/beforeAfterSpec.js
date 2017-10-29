@@ -15,7 +15,9 @@ describe('Before/After Test Suite', function () {
       }
     ])
 
-    unit( bot, script ).then( function () {
+    unit( bot, script ,{
+      title : 'Should support `before` and `after` attributes'
+    }).then( function () {
       done();
     });
   });

@@ -1,22 +1,20 @@
-function UserMessage(config, bot, logger, connector) {
+function UserMessage(config, bot, logReporter, connector) {
   this.config = config;
-  this.afterFunc = config.after || function (config, bot ) {
+  this.afterFunc = config.after || function (config, bot) {
       return Promise.resolve();
     }
-  this.beforeFunc = config.before || function (config, bot ) {
+  this.beforeFunc = config.before || function (config, bot) {
       return Promise.resolve();
     }
 
-  this.logger = logger;
+  this.logReporter = logReporter;
   this.bot = bot;
   this.connector = connector;
 }
 
-UserMessage.prototype.send = function () {
+UserMessage.prototype.send = function (step) {
   return new Promise((resolve, reject) => {
-
-    this.logger('User: >> ' + this.config.user);
-    this.logger('Iterating to next step from user message');
+    this.logReporter.messageSent(step, this.config.user);
 
     this.beforeFunc(this.config, this.bot)
       .then(() => {
@@ -43,12 +41,13 @@ UserMessage.prototype.send = function () {
         return true;
       })
       .then(() => {
-        return this.afterFunc(this.config,this.bot );
+        return this.afterFunc(this.config, this.bot);
       })
       .then(() => {
         resolve();
       })
       .catch((err)=> {
+        this.logReporter.error(step, err);
         reject(err);
       });
   })

@@ -47,7 +47,9 @@ describe('Test Suite for Conversation Mock class', function () {
       {bot:'Sixth call'},
       {endConversation:true}
     ];
-    unit(bot,script).then( function () {
+    unit(bot,script,{
+      title : 'Test Conversation Mock in simple dialog'
+    }).then( function () {
       done();
     }, function (error) {
       fail('Error during testing ConversationMock:' + error.toString());

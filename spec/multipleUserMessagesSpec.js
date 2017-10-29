@@ -15,7 +15,9 @@ describe('Multiple User Message: test that multiple messages from users support'
       }
     ])
 
-    unit( bot, script ).then( function () {
+    unit( bot, script,{
+      title : 'Should support double `user` messages'
+    } ).then( function () {
       done();
     });
   });

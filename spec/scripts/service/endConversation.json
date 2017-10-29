@@ -13,5 +13,8 @@
   },
   {
     "bot": "Hello world!"
+  },
+  {
+    "endConversation" : true
   }
 ]

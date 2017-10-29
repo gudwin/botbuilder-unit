@@ -4,7 +4,7 @@ const builder = require('botbuilder');
 const util = require('util');
 describe('Prompts Test Suite: make sure that default Prompts supported', function () {
   let bot = null;
-  let test = function (type, done, callback, responseCallback) {
+  let test = function (title,type, done, callback, responseCallback) {
     bot = botFactory();
     let script = require(`./scripts/prompts/${type}`);
     let waterfall = [callback];
@@ -16,30 +16,32 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
       });
     }
     bot.dialog('/test', waterfall)
-    unit(bot, script).then( function () {
+    unit(bot, script,{
+      title : title
+    }).then( function () {
       done();
     });;
   }
   it('Should support Prompt.text', function (done) {
-    test('text', done, function (session) {
+    test('Should support Prompt.text', 'text', done, function (session) {
       builder.Prompts.text(session, 'Please type any text')
     });
   });
 
   it('Should support Prompt.confirm', function (done) {
-    test('confirm', done, function (session) {
+    test('Should support Prompt.confirm','confirm', done, function (session) {
       builder.Prompts.text(session, 'Please select yes or no')
     });
   });
 
   it('Should support Prompt.number', function (done) {
-    test('number', done, function (session) {
+    test('Should support Prompt.number','number', done, function (session) {
       builder.Prompts.number(session, 'Please type any number')
     });
   });
 
   it('Should support Prompt.time', function (done) {
-    test('time', done, function (session) {
+    test('Should support Prompt.time','time', done, function (session) {
       builder.Prompts.time(session, 'Please type any date')
     }, function (session, results) {
       let date = new Date(results.response.resolution.start);
@@ -48,7 +50,7 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
   });
 
   it('Should support Prompt.choices', function (done) {
-    test('choices', done, function (session) {
+    test('Should support Prompt.choices','choices', done, function (session) {
       builder.Prompts.choice(session, 'Please select any choice', 'red|green|blue')
     }, (session, results) => {
       session.endDialog(`Your response is:${results.response.entity}`);
@@ -56,7 +58,7 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
   });
 
   it('Should support Prompts.attachment', function (done) {
-    test('attachment', done, (session,next) => {
+    test('Should support Prompts.attachment','attachment', done, (session,next) => {
       // looks like there is a bug in MBF, and because of that
       // i'm writing another shitty line of code
       let message = new builder.Message(session);

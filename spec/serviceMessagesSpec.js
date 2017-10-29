@@ -14,7 +14,9 @@ describe('Test service messages like typing, endconversation and etc', function 
         session.endDialog('Hello world!');
       }
     ]);
-    unit(bot, script).then(function () {
+    unit(bot, script,{
+      title : 'Test typing'
+    }).then(function () {
       done();
     });
   });
@@ -26,7 +28,9 @@ describe('Test service messages like typing, endconversation and etc', function 
       }
     ]);
 
-    unit(bot, script).then(function () {
+    unit(bot, script,{
+      title : 'Test endConversation'
+    }).then(function () {
       done();
     });
   });

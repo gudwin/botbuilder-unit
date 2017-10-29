@@ -18,7 +18,9 @@ describe('Basic Test Suite: text user/bot messages with user', function () {
       session.endDialog('TestB wialog welcomes you!')
     });
 
-    unit( bot, script ).then( function () {
+    unit( bot, script, {
+      title: 'Should support `user` and `bot` attributes'
+    } ).then( function () {
       done();
     });
   });

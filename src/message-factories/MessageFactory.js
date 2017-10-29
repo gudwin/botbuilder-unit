@@ -4,13 +4,15 @@ const UserMessageFactory = require('./UserMessageFactory');
 function MessageFactory( ) {
 
 }
-MessageFactory.produce = function ( config, bot , logger ) {
-  if ( config.bot || config.endConversation || config.typing ) {
-    return BotMessageFactory.produce( config, bot, logger );
+MessageFactory.produce = function ( config, bot , logReporter ) {
+  let isBot = ("undefined" != typeof config.bot) || config.endConversation || config.typing;
+  if ( isBot  ) {
+    return BotMessageFactory.produce( config, bot, logReporter );
   }
-  if ( config.user ) {
+  let isUser = "undefined" != typeof config.user;
+  if (  isUser ) {
+    return UserMessageFactory.produce(config, bot, logReporter )
   }
-  return UserMessageFactory.produce(config, bot, logger )
   throw new Error(`Unsupported config - ${JSON.stringify(config)}`);
 
 }

@@ -1,5 +1,3 @@
-
-
 "use strict";
 
 const FINISH_TIMEOUT = 20;
@@ -7,9 +5,32 @@ const NEXT_USER_MESSAGE_TIMEOUT = 20;
 const DEFAULT_TEST_TIMEOUT = 10000;
 
 const MessageFactory = require('./src/message-factories/MessageFactory');
+const PlainLogReporter = require('./src/log-reporters/PlainLogReporter');
+const EmptyLogReporter = require('./src/log-reporters/EmptyLogReporter');
+const BeautyLogReporter = require('./src/log-reporters/BeautyLogReporter');
+
+function getLogReporter() {
+  return module.exports.config.reporter;
+}
+
+function detectReporter() {
+  switch (process.env.BOTBUILDERUNIT_REPORTER) {
+    case 'beauty':
+      return new BeautyLogReporter();
+    case 'empty' :
+      return new EmptyLogReporter();
+    case 'plain' :
+    default:
+      return new PlainLogReporter();
+  }
+}
+
 
 function testBot(bot, messages, options) {
-  options = Object.assign({timeout: DEFAULT_TEST_TIMEOUT}, options);
+  options = Object.assign({
+    timeout: module.exports.config.timeout,
+    title : ''
+  }, options);
   messages = messages.slice(0);
 
   function callTrigger(check, bot, name, args) {
@@ -20,41 +41,51 @@ function testBot(bot, messages, options) {
 
   return new Promise(function (resolve, reject) {
     var step = 0;
+    var finished = false;
     var connector = bot.connector('console');
 
     function done() {
+      finished = true;
       resolve();
     }
 
     function fail(err) {
+      if ( !finished) {
+        getLogReporter().error(step, err);
+      }
+      finished = true;
       reject(err);
     }
 
     function checkBotMessage(message, check, doneCallback) {
-      MessageFactory.produce(check, bot, _d('log'))
-        .validate( message )
+      MessageFactory.produce(check, bot, getLogReporter())
+        .validate(step -1, message)
         .then(() => {
           doneCallback();
         })
-      .catch((err) => {
-        doneCallback( err );
-      });
+        .catch((err) => {
+          doneCallback(err);
+        });
     }
 
     function next() {
       if (!messages.length) {
-        _d('log')('SCRIPT FINISHED');
-        setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
+
+        if ( !finished ) {
+          finished = true;
+          getLogReporter().scriptFinished(step);
+          setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
+        } else {
+        }
         return;
       }
 
       if (messages[0].user) {
         let messageConfig = messages.shift();
-        step++;
-
-        MessageFactory.produce(messageConfig, bot, _d('log'))
-          .send(messageConfig)
+        MessageFactory.produce(messageConfig, bot, getLogReporter())
+          .send(step )
           .then(function () {
+            step++;
             if (messages.length && (messages[0].user)) {
               setTimeout(function () {
                 next();
@@ -68,23 +99,10 @@ function testBot(bot, messages, options) {
 
     }
 
-    function outputScript() {
-      let intro = '';
-      messages.forEach((item, i) => {
-        item = Object.assign({}, item);
-        for ( var key in item ) {
-          if ( item.hasOwnProperty(key) && ("function" == typeof (item[key]))) {
-            item[key] = '[[Function]]';
-          }
-        }
-        intro = intro + (`${i}: ${JSON.stringify(item)}\n`);
-      });
-      _d('log')(intro);
-    }
 
     function startTesting() {
       if (messages.length) {
-        outputScript();
+        getLogReporter().newScript(messages,options.title);
         next();
       }
     }
@@ -92,21 +110,20 @@ function testBot(bot, messages, options) {
     function setupTimeout() {
       if (options.timeout) {
         setTimeout(() => {
-          reject(`Default timeout (${options.timeout}) exceeded`);
+          if ( !finished) {
+            let msg = `Default timeout (${options.timeout}) exceeded`;
+            fail(msg );
+          }
         }, options.timeout);
       }
     }
 
     function setupReplyReceiver() {
       bot.on('send', function (message) {
-        _d('log')(`Step: #${step}\nReceived message from bot:`);
-        _d('log')(message);
+        step++;
         if (messages.length) {
           var check = messages.shift();
-          _d('log')('Expecting:');
-          _d('log')(check);
-          _d('log')('--');
-          step++;
+
           callTrigger(check, bot, 'before', message);
           checkBotMessage(message, check, (err) => {
             callTrigger(check, bot, 'after', err);
@@ -118,7 +135,7 @@ function testBot(bot, messages, options) {
           });
         }
         else {
-          _d('log')('Bot: >>Ignoring message (Out of Range)');
+          getLogReporter().warning(step, 'Ignoring message (Out of Range)');
           setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
         }
       });
@@ -130,13 +147,11 @@ function testBot(bot, messages, options) {
   })
 }
 
-testBot.dependencies = {
-  log: console.log
-}
-function _d(name) {
-  return testBot.dependencies[name];
-
-}
-
 module.exports = testBot;
+module.exports.config = {
+  timeout: process.env.BOTBUILDERUNIT_TEST_TIMEOUT ? process.env.BOTBUILDERUNIT_TEST_TIMEOUT : DEFAULT_TEST_TIMEOUT,
+  reporter: process.env.BOTBUILDERUNIT_REPORTER ? detectReporter() : new PlainLogReporter()
+};
+module.exports.PlainLogReporter = PlainLogReporter;
+module.exports.BeautyLogReporter = BeautyLogReporter;
 module.exports.ConversationMock = require('./src/ConversationMock');
