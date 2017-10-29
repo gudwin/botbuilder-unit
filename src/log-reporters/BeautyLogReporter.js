@@ -153,6 +153,10 @@ BeautyLogReporter.prototype.warning = function (step, message) {
   this.outputCentralized(`WARNING ON STEP #${step}`, colors.yellow);
   console.log(colors.yellow(message));
 }
+BeautyLogReporter.prototype.info = function (step, message) {
+  this.outputCentralized(`INFO ON STEP #${step}`, colors.yellow);
+  console.log(colors.yellow(message));
+}
 
 
 module.exports = BeautyLogReporter;

@@ -92,7 +92,7 @@ BeautyLogReporter.prototype.getDate = function () {
   return date.toTimeString().split(' ')[0];
 }*/
 
-const BeautyLogReporter = require('./src/log-reporters/BeautyLogReporter');
+const BeautyLogReporter = require('../src/log-reporters/BeautyLogReporter');
 
 
 let script = [
@@ -125,4 +125,5 @@ logger.endConversation(10);
 logger.scriptFinished(12);
 logger.expectationError(11, {bot: 'I want to add...'}, script[11]);
 logger.warning(12, 'Some important information to notice!');
-logger.error(12, {customError: 'Oh, well! I just happenned...'})
+logger.error(12, {customError: 'Oh, well! I just happenned...'});
+logger.info(13, {a:1,b:2,text: 'Oh, well! I just happenned...'})

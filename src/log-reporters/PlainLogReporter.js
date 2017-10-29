@@ -43,6 +43,9 @@ PlainLogReporter.prototype.error = function (step, message) {
 PlainLogReporter.prototype.warning = function (step, message) {
   console.log(`#${step} Warning: ${this.inspect(message)}`);
 }
+PlainLogReporter.prototype.info = function (step, message) {
+  console.log(`#${step} Info: ${this.inspect(message)}`);
+}
 
 
 module.exports = PlainLogReporter;

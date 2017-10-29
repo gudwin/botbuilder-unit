@@ -41,5 +41,8 @@ BaseLogReporter.prototype.error = function (step, message) {
 BaseLogReporter.prototype.warning = function (step, message) {
 
 }
+BaseLogReporter.prototype.info = function (step, message) {
+
+}
 
 module.exports = BaseLogReporter;
