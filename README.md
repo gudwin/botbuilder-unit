@@ -152,7 +152,8 @@ The library exposes `config` object in module.exports. Properties of an object:
 - getListener() returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
 
 # Changelog
-- 0.3.0 - new output log, timeout support
+- 0.4.0 - new output log, global options support
+- 0.3.0 - timeout support, minor fixes
 - 0.2.3 - fixed error with case then multiple messages from users awaited
 - 0.2.2 - updated error messages in case if current message in script does not matching pattern for a bot's message
 - 0.2.0 - removed ambiguity with user and bot messages, using "user" and "bot" instead of "out" and "in"
