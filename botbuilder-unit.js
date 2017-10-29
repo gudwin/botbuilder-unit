@@ -94,7 +94,7 @@ function testBot(bot, messages, options) {
         let messageConfig = messages.shift();
         step++;
         MessageFactory.produce(messageConfig, bot, getLogReporter())
-          .send(step)
+          .send(step - 1)
           .then(function () {
             if (messages.length && (messages[0].user)) {
               setTimeout(function () {
