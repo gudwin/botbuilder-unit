@@ -14,7 +14,7 @@ function UserMessage(config, bot, logReporter, connector) {
 
 UserMessage.prototype.send = function (step) {
   return new Promise((resolve, reject) => {
-    this.logReporter.messageSent(step, this.config.user);
+    this.logReporter.messageSent(step, this.config);
 
     this.beforeFunc(this.config, this.bot)
       .then(() => {
