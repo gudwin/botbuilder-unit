@@ -12,7 +12,6 @@ const BotMessage = require('./src/messages/BotMessage');
 const UserMessage = require('./src/messages/UserMessage');
 
 
-
 function detectReporter() {
   switch (process.env.BOTBUILDERUNIT_REPORTER) {
     case 'beauty':
@@ -37,6 +36,7 @@ function testBot(bot, messages, options) {
   function getLogReporter() {
     return options.reporter;
   }
+
   function callTrigger(check, bot, name, args) {
     if ("function" == typeof check[name]) {
       check[name](bot, args);
@@ -92,10 +92,10 @@ function testBot(bot, messages, options) {
 
       if (messages[0].user) {
         let messageConfig = messages.shift();
+        step++;
         MessageFactory.produce(messageConfig, bot, getLogReporter())
           .send(step)
           .then(function () {
-            step++;
             if (messages.length && (messages[0].user)) {
               setTimeout(function () {
                 next();
@@ -131,6 +131,7 @@ function testBot(bot, messages, options) {
     function setupReplyReceiver() {
       bot.on('send', function (message) {
         step++;
+        getLogReporter().messageReceived(step, message);
         if (messages.length) {
           var check = messages.shift();
 

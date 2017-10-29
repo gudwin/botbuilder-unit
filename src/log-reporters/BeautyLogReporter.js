@@ -5,9 +5,9 @@ const colors = require('colors');
 
 const MIN_COLUMNS_PER_ROW = 40;
 const EMPTY_FINAL_REPORT = {
-  firstErrorOnStep : false,
-  totalSteps :0,
-  warnings : false
+  firstErrorOnStep: false,
+  totalSteps: 0,
+  warnings: false
 }
 
 function BeautyLogReporter() {
@@ -83,7 +83,7 @@ BeautyLogReporter.prototype.wrap = function (msg, colorFunc) {
 // Base Reporter Inherited methods
 
 BeautyLogReporter.prototype.newScript = function (messages, scriptName) {
-  this.finalReport = Object.assign({},EMPTY_FINAL_REPORT);
+  this.finalReport = Object.assign({}, EMPTY_FINAL_REPORT);
   if (scriptName) {
     this.outputCentralized(`NEW SCRIPT: ${scriptName.toUpperCase()}`, colors.blue);
   }
@@ -155,7 +155,7 @@ BeautyLogReporter.prototype.warning = function (step, message) {
 }
 BeautyLogReporter.prototype.info = function (step, message) {
   this.outputCentralized(`INFO ON STEP #${step}`, colors.yellow);
-  console.log(colors.yellow(message));
+  console.log(colors.yellow(this.inspect(message)));
 }
 
 

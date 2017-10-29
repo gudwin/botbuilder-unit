@@ -13,9 +13,7 @@ BotMessage.prototype.validate = function (step, receivedMessage) {
   return new Promise((resolve, reject) => {
     this.beforeFunc(this.config, this.bot)
       .then(() => {
-
         if ("undefined" != typeof this.config.bot) {
-          this.logReporter.messageReceived(step, receivedMessage);
           if (typeof this.config.bot === 'function') {
             return this.config.bot(this.bot, receivedMessage);
           }
@@ -30,7 +28,7 @@ BotMessage.prototype.validate = function (step, receivedMessage) {
             }
             else {
               let msg = `No input message in step configuration:\n${JSON.stringify(this.config)}`
-              this.logReporter.error(step, msg );
+              this.logReporter.error(step, msg);
               reject(msg);
             }
             return true;
@@ -43,7 +41,7 @@ BotMessage.prototype.validate = function (step, receivedMessage) {
           return true;
         } else {
           let msg = `Unable to find matching validator. Step config:\n${JSON.stringify(this.config)}`;
-          this.logReporter.error(step, msg );
+          this.logReporter.error(step, msg);
           reject(msg);
         }
       })
