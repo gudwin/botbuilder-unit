@@ -1,4 +1,15 @@
 # botbuilder-unit
+
+**Unfortunately, development just started and documentation is not ready. So, please study tests specifications.** 
+
+
+## Requied Actions
+- [ ] Complete message configuration section
+- [ ] Complete script configuration section 
+- [ ] Complete global configuration section
+- [ ] Update a Quick Start Section (remove Jasmine)
+- [ ] Describe BaseLogReporter interface
+ 
 ## Glossary
 - **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
 
@@ -45,10 +56,6 @@ In case, if the message is from the bot, than:
     }
 ]
 ```
-
-Unfortunately, development just started and documentation is not ready. So, 
-please study tests specifications. 
-
   
 
 # Quick Start
@@ -56,99 +63,48 @@ please study tests specifications.
 ## Install library
 
 `npm install --save-dev botbuilder-unit`
+
 ## Install jasmine libraries
 `npm install --save-dev jasmine`
 `npm install --save-dev jasmine-terminal-reporter`
 
 ## Create Test Specification
 
-File **"spec/botSpec.js"**:
+File **"test-script.js"**:
 ```javascript
 const unit = require('botbuilder-unit');
 const builder = require('botbuilder');
 
-describe('Simple test for a bot', () => {
-  let bot = null;
-  beforeEach( () => {
-    let connector = new builder.ConsoleConnector().listen();
-    bot = new builder.UniversalBot(connector);
-    bot.dialog('/', [
-      session => builder.Prompts.text(session,'How should I call you?'),
-      (session, response) => session.endDialog(`Nice to meet you, ${JSON.stringify(response.response)}!`)
-    ]);
-  });
-  it('Test welcome flow', (done) => {
-    let messages = require('./hiScript');
-    unit(bot,messages).then( function () {
-        done();
-    });
-  });
-});
-```
-
-## Create Jasmine Infrastructure Files
-
-File **"spec/support/jasmine.json"**:
-```javascript
-{
-  "spec_dir": "spec",
-  "spec_files": [
-    "**/*[sS]pec.js"
-  ],
-  "helpers": [
-    "helpers/**/*.js"
-  ],
-  "stopSpecOnExpectationFailure": false,
-  "random": false
-}
-```
-
-Create file **"spec/runner.js"**:
-```javascript
-process.on('uncaughtException', function (exception) {
-  console.log(exception);
-});
-process.on('unhandledRejection', (reason, p) => {
-  console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
-});
-
-var Jasmine = require('jasmine');
-var jasmine = new Jasmine();
-jasmine.jasmine.DEFAULT_TIMEOUT_INTERVAL = 50000;
-jasmine.loadConfigFile('./spec/support/jasmine.json');
-jasmine.configureDefaultReporter({
-  showColors: true
-});
-
-
-var Reporter = require('jasmine-terminal-reporter');
-var reporter = new Reporter({
-  isVerbose : true,
-  includeStackTrace : true,
-
-})
-jasmine.addReporter( reporter );
-jasmine.execute();
-```
-
-## Prepare Conversation Script
- 
-Create file **"spec/hiScript.js"**:  
-```javascript
-module.exports = [
+let script = [
   {
-    "user" : "hi"
+    "user": "hi"
   },
   {
-    "bot" :"How should I call you?"
+    "bot": "How should I call you?"
   },
   {
-    "user" : "Timmy"
+    "user": "Timmy"
   },
   {
-    "bot" : "Nice to meet you, \"Timmy\"!"
+    "bot": "Nice to meet you, \"Timmy\"!"
   }
-]
+];
+
+let connector = new builder.ConsoleConnector().listen();
+bot = new builder.UniversalBot(connector);
+bot.dialog('/', [
+  session => builder.Prompts.text(session, 'How should I call you?'),
+  (session, response) => session.endDialog(`Nice to meet you, ${JSON.stringify(response.response)}!`)
+]);
+unit(bot, script, {
+  title: 'Your first test script'
+}).then(() => {
+  console.log('Script passed');
+  process.exit(); // bot create console connector
+}, (err)  => {
+  console.error(err);
+})
+
 ```
 
 #  Installation
@@ -156,10 +112,31 @@ module.exports = [
 `npm install --save-dev botbuilder-unit`
 
 # Configuration
- 
-## Conversation level
 
-## Message level
+## Global options
+
+Global options will be applied to every script that will be processed by library. There are two ways to setup a global option:
+- as an environment variable, Library will autoload it during startup;
+- as an attribute of _config_ object exposed in _module.exports_ section of The Library; 
+ 
+### As an Environment Variable
+
+- **BOTBUILDERUNIT_TEST_TIMEOUT** - timeout for script execution in milliseconds
+- **BOTBUILDERUNIT_REPORTER** - logging style, supported values: _empty_, _plain_ and _beauty_
+
+For example, to run script with 10 seconds timeout and beautified output you need to execute something like: 
+`export BOTBUILDERUNIT_REPORTER=beauty; export BOTBUILDERUNIT_TEST_TIMEOUT=10000; npm test`
+
+### As a part of the Library module.exports
+
+The library exposes `config` object in module.exports. Properties of an object:
+- **timeout** - timeout for script execution in milliseconds
+- **reporter** - the instance of reporting class. Default value: _new PlainLogReporter()_. Classes provided by library:
+  - **PlainLogReporter**, default, will output text messages in console 
+  - **EmptyLogReporter**, nothing will be sent to output
+  - **PlainLogReporter**, colored and styled output, useful for long scripts 
+
+## Script level
 
 # Mocking conversation
  

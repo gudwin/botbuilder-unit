@@ -1,17 +1,18 @@
 --------------------------------
-v 0.3.0
-
-
-
+v 0.4.0
 HIGHLIGHTS:
-- [NO]colored output (disabled by default);
-- [OK] callbacks changed to Promises
-- [OK] support for test timeout;
-- [IN PROGRESS]new output log;
+- [OK]colored output (disabled by default);
+- [OK] ability to setup test timeout globally
 - [NO]session state management support;
 - [NO]support for random messages;
 - [NO]debugging steps added: showSession, showDialogStack
 - [NO]support for conversation started by bot
+
+--------------------------------
+v 0.3.0
+
+- [OK] callbacks changed to Promises
+- [OK] support for test timeout;
 
 INCOMPATIBILITIES
 
