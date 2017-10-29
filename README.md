@@ -60,15 +60,13 @@ In case, if the message is from the bot, than:
 
 # Quick Start
 
+![Script output for sample script](https://github.com/gudwin/botbuilder-unit/blob/master/examples/example-of-beauty-log.png?raw=true)
+
 ## Install library
 
 `npm install --save-dev botbuilder-unit`
 
-## Install jasmine libraries
-`npm install --save-dev jasmine`
-`npm install --save-dev jasmine-terminal-reporter`
-
-## Create Test Specification
+## Create Test Script
 
 File **"test-script.js"**:
 ```javascript
