@@ -21,8 +21,6 @@ As input the Library requires a bot and a script
 
 # Quick Start
 
-![Script output for sample script](https://github.com/gudwin/botbuilder-unit/blob/master/examples/example-of-beauty-log.png?raw=true)
-
 ## Install library
 
 `npm install --save-dev botbuilder-unit`
@@ -34,6 +32,7 @@ File **"test-script.js"**:
 const unit = require('botbuilder-unit');
 const builder = require('botbuilder');
 
+// This array, also called a script. It will be used to validate conversation with user
 let script = [
   {
     "user": "hi"
@@ -49,23 +48,34 @@ let script = [
   }
 ];
 
+// Setting up a bot
 let connector = new builder.ConsoleConnector().listen();
 bot = new builder.UniversalBot(connector);
 bot.dialog('/', [
   session => builder.Prompts.text(session, 'How should I call you?'),
   (session, response) => session.endDialog(`Nice to meet you, ${JSON.stringify(response.response)}!`)
 ]);
+
+// Executing test
 unit(bot, script, {
-  title: 'Your first test script'
+  title: 'Your first test script',
+  reporter : new unit.BeautyLogReporter() // Display log in messenger-like style, with colors
 }).then(() => {
+  // If test finished successfully
   console.log('Script passed');
-  process.exit(); // bot create console connector
+  process.exit();
 }, (err)  => {
   console.error(err);
 })
 
 ```
 
+## Execute Script
+ ```node ./test-script.js```
+ 
+At the end you will see next result:
+ ![Script output for sample script](https://github.com/gudwin/botbuilder-unit/blob/master/examples/example-of-beauty-log.png?raw=true)
+ 
 #  Installation
 
 `npm install --save-dev botbuilder-unit`
@@ -146,15 +156,15 @@ In case, if the message is from the bot, than:
  
 ### ConversationMock.prototype
  
-- getListener() returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
+- **getListener()** returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
 
 ### ConversationMock static methods
 - **sendMessagesStep( messages, afterFunc)** - Creates a step for waterfall dialog. Arguments:
-  - **messages** argument is an array of strings, these messages will be send to user. 
+  - **messages** argument is an array of strings, these messages will be sent to user; 
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
-- 0.4.2 - new static method for ConversationMock class - sendMessagesStep  
+- 0.4.2 - new static method for ConversationMock class - sendMessagesStep, minor fixes   
 - 0.4.0 - new output log, global options support
 - 0.3.0 - timeout support, minor fixes
 - 0.2.3 - fixed error with case then multiple messages from users awaited
