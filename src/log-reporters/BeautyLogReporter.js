@@ -100,10 +100,10 @@ BeautyLogReporter.prototype.scriptFinished = function (step) {
     this.log(`Completed / Total steps: ${this.finalReport.firstErrorOnStep}/${this.finalReport.totalSteps}`, colors.red)
   } else if (this.finalReport.warnings) {
     this.outputCentralized(' SCRIPT FINISHED WITH WARNINGS', colors.yellow);
-    this.log(`Completed / Total steps: ${step}/${this.finalReport.totalSteps}`, colors.yellow);
+    this.log(`Completed / Total steps: ${step+1}/${this.finalReport.totalSteps}`, colors.yellow);
   } else {
     this.outputCentralized(' SCRIPT FINISHED SUCCESSFULLY', colors.green);
-    this.log(`Completed / Total steps: ${step}/${this.finalReport.totalSteps}`, colors.green);
+    this.log(`Completed / Total steps: ${step+1}/${this.finalReport.totalSteps}`, colors.green);
   }
 
 }
