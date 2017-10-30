@@ -64,7 +64,7 @@ function testBot(bot, messages, options) {
     function checkBotMessage(message, check, doneCallback) {
       let validationMessage = MessageFactory.produce(check, bot, getLogReporter());
       if (validationMessage instanceof BotMessage) {
-        validationMessage.validate(step - 1, message)
+        validationMessage.validate(step, message)
           .then(() => {
             doneCallback();
           })
@@ -94,7 +94,7 @@ function testBot(bot, messages, options) {
         let messageConfig = messages.shift();
         step++;
         MessageFactory.produce(messageConfig, bot, getLogReporter())
-          .send(step - 1)
+          .send(step)
           .then(function () {
             if (messages.length && (messages[0].user)) {
               setTimeout(function () {
@@ -113,6 +113,7 @@ function testBot(bot, messages, options) {
     function startTesting() {
       if (messages.length) {
         getLogReporter().newScript(messages, options.title);
+        step = -1;
         next();
       }
     }
