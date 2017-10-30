@@ -166,6 +166,7 @@ module.exports.config = {
 };
 module.exports.PlainLogReporter = PlainLogReporter;
 module.exports.BeautyLogReporter = BeautyLogReporter;
+module.exports.EmptyLogReporter = EmptyLogReporter;
 module.exports.ConversationMock = require('./src/ConversationMock');
 module.exports.BotMessage = BotMessage;
 module.exports.UserMessage = UserMessage;
