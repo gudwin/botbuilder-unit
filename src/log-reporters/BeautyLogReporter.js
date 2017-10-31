@@ -94,8 +94,6 @@ BeautyLogReporter.prototype.newScript = function (messages, scriptName) {
 BeautyLogReporter.prototype.scriptFinished = function (step) {
   this.isLeftPaddingEnabled = false;
   if (false !== this.finalReport.firstErrorOnStep) {
-    console.log('-=-');
-    console.log(this.finalReport);
     this.outputCentralized(' SCRIPT FINISHED WITH ERRORS ', colors.red);
     this.log(`Completed / Total steps: ${this.finalReport.firstErrorOnStep}/${this.finalReport.totalSteps}`, colors.red)
   } else if (this.finalReport.warnings) {
