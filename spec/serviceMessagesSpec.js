@@ -1,4 +1,5 @@
 const botFactory = require('./botFactory');
+const botbuilder = require('botbuilder');
 const unit = require('../');
 let bot = null;
 
@@ -14,8 +15,8 @@ describe('Test service messages like typing, endconversation and etc', function 
         session.endDialog('Hello world!');
       }
     ]);
-    unit(bot, script,{
-      title : 'Test typing'
+    unit(bot, script, {
+      title: 'Test typing'
     }).then(function () {
       done();
     });
@@ -28,8 +29,34 @@ describe('Test service messages like typing, endconversation and etc', function 
       }
     ]);
 
-    unit(bot, script,{
-      title : 'Test endConversation'
+    unit(bot, script, {
+      title: 'Test endConversation'
+    }).then(function () {
+      done();
+    });
+  });
+  it('Testing suggested actions', (done) => {
+    let script = require('./scripts/service/suggestedActions');
+    bot.dialog('/test', [
+      function (session) {
+        let text = 'Hello world!';
+        var msg = new botbuilder.Message(session)
+          .text(text)
+          .suggestedActions(
+            botbuilder.SuggestedActions.create(
+              session, [
+                botbuilder.CardAction.imBack(session, "add", "Add"),
+                botbuilder.CardAction.imBack(session, "modules", "Modules"),
+                botbuilder.CardAction.imBack(session, "test me", "Test me"),
+                botbuilder.CardAction.imBack(session, "settings", "Settings")
+              ]
+            ));
+        session.send(msg);
+        session.endConversation();
+      }
+    ]);
+    unit(bot, script, {
+      title: 'Testing suggested actions'
     }).then(function () {
       done();
     });
