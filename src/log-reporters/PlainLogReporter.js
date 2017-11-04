@@ -15,7 +15,7 @@ PlainLogReporter.prototype.inspect = function (message) {
 }
 
 PlainLogReporter.prototype.messageReceived = function (step, message) {
-  let outputMessage = message.text ? message.text : this.inspect(message);
+  let outputMessage = this.inspect(message);
   console.log(`#${step} Bot: ${outputMessage}`);
 }
 PlainLogReporter.prototype.endConversation = function (step) {

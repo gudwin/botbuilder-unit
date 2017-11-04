@@ -64,7 +64,8 @@ BeautyLogReporter.prototype.outputMessageBox = function (step, msg, title, color
 }
 BeautyLogReporter.prototype.wrap = function (msg, colorFunc) {
   let moreThanOnce = false;
-  while (msg.length > 0) {
+
+  do  {
     let chunk = msg.substr(0, this.contentColumnsPerRow - 4);
     if (chunk.length < this.contentColumnsPerRow - 4) {
       chunk = chunk + ' '.repeat(this.contentColumnsPerRow - 4 - chunk.length);
@@ -75,7 +76,7 @@ BeautyLogReporter.prototype.wrap = function (msg, colorFunc) {
 
     msg = msg.substr(this.contentColumnsPerRow - 4);
     this.log(chunk, colorFunc);
-  }
+  } while (msg.length > 0);
 
 }
 
@@ -107,6 +108,15 @@ BeautyLogReporter.prototype.scriptFinished = function (step) {
 }
 BeautyLogReporter.prototype.messageReceived = function (step, message) {
   let outputMessage = message.text ? message.text : this.inspect(message);
+  if ( message.suggestedActions ) {
+    if ( message.suggestedActions.actions ) {
+      outputMessage += `\n\n--\nSuggested actions:`;
+      message.suggestedActions.actions.forEach((item) => {
+        outputMessage += `\n - ${item.value}`;
+      });
+    }
+  }
+  //let outputMessage = this.inspect(message);
   this.isLeftPaddingEnabled = false;
 
   this.outputMessageBox(step, outputMessage, 'Bot wrote:', colors.blue);
