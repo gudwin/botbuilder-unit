@@ -121,7 +121,18 @@ In case, if the message is from the bot, than:
  
 ```javascript
 {
-    "bot" : "Hello world!"
+    "bot" : "Hello world!",
+    "suggestedActions" : [
+          botbuilder.CardAction.imBack(null, "add", "Add"),
+          botbuilder.CardAction.imBack(null, "settings", "Settings")
+    ]
+}
+```
+
+Message with suggested actions:
+```javascript
+{
+    "bot" : ""
 }
 ```
  
@@ -164,6 +175,7 @@ In case, if the message is from the bot, than:
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
+- 0.4.7 - support for suggestActions, minor fixes
 - 0.4.2 - new static method for ConversationMock class - sendMessagesStep, minor fixes   
 - 0.4.0 - new output log, global options support
 - 0.3.0 - timeout support, minor fixes
