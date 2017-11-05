@@ -26,7 +26,6 @@ BotMessage.prototype.validate = function (step, receivedMessage) {
                 this.validateSuggestedActions(receivedMessage, this.config.suggestedActions, reject);
               } catch (e) {
                 this.logReporter.expectationError(this.step, receivedMessage, this.config);
-                this.logReporter.error(step, e);
                 reject(e);
                 return false;
               }
