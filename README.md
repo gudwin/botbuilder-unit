@@ -118,7 +118,23 @@ If the message is from the user, than message object should look like this:
 ```
 
 In case, if the message is from the bot, than:
+
+```javascript
+ {
+     "bot" : "Hello, %username%"
+ }
+```
+
+It is possible to validate bot messages with RegExps
  
+```javascript
+ {
+     "bot" : /^Hello/
+ }
+```
+
+Message with suggested actions:
+
 ```javascript
 {
     "bot" : "Hello world!",
@@ -129,12 +145,7 @@ In case, if the message is from the bot, than:
 }
 ```
 
-Message with suggested actions:
-```javascript
-{
-    "bot" : ""
-}
-```
+
  
 ### Example of the Script
 
