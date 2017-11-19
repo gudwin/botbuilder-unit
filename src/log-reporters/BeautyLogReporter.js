@@ -166,5 +166,15 @@ BeautyLogReporter.prototype.info = function (step, message) {
   console.log(colors.yellow(this.inspect(message)));
 }
 
+BeautyLogReporter.prototype.session = function (step, message) {
+  this.outputCentralized(`SET SESSION ON STEP #${step}`, colors.yellow);
+  let output = {
+    userData : Object.assign({}, message.userData),
+    conversationData : Object.assign({}, message.conversationData),
+    privateConversationData : Object.assign({}, message.privateConversationData),
+    sessionState : Object.assign({}, message.sessionState)
+  }
+  console.log(colors.yellow(this.inspect(output)));
+}
 
 module.exports = BeautyLogReporter;

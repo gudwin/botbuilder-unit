@@ -10,6 +10,7 @@ const EmptyLogReporter = require('./src/log-reporters/EmptyLogReporter');
 const BeautyLogReporter = require('./src/log-reporters/BeautyLogReporter');
 const BotMessage = require('./src/messages/BotMessage');
 const UserMessage = require('./src/messages/UserMessage');
+const SessionMessage = require('./src/messages/SessionMessage');
 
 
 function detectReporter() {
@@ -90,13 +91,13 @@ function testBot(bot, messages, options) {
         return;
       }
 
-      if (messages[0].user) {
+      if (messages[0] && (messages[0].session || messages[0].user)) {
         let messageConfig = messages.shift();
         step++;
         MessageFactory.produce(messageConfig, bot, getLogReporter())
-          .send(step)
+          .send(step)//
           .then(function () {
-            if (messages.length && (messages[0].user)) {
+            if (messages.length && (messages[0].user || messages[0].session)) {
               setTimeout(function () {
                 next();
               }, NEXT_USER_MESSAGE_TIMEOUT)
@@ -170,3 +171,4 @@ module.exports.EmptyLogReporter = EmptyLogReporter;
 module.exports.ConversationMock = require('./src/ConversationMock');
 module.exports.BotMessage = BotMessage;
 module.exports.UserMessage = UserMessage;
+module.exports.DEFAULT_ADDRESS = SessionMessage.DEFAULT_ADDRESS;

@@ -109,6 +109,13 @@ The library exposes `config` object in module.exports. Properties of an object:
 
 The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
 
+### Script Messages
+There are three message types supported, they identified by attribute:
+ - **user**, for sending messages to bot
+ - **bot**, to specify an expected message from bot
+ - **session**, to manipulate session
+  
+
 If the message is from the user, than message object should look like this:
 
 ```javascript
@@ -145,7 +152,23 @@ Message with suggested actions:
 }
 ```
 
+Message that changes session, looks:
+```javascript
+{
+    "session" : {userData: {userName : 'Joe'}}
+}
+```
 
+**All messages support handler function to be passeda as an attribute value**, handler always should return Promise object
+ 
+Message that changes session, looks:
+```javascript
+{
+    "session" : function (session) {
+         return Promise.resolve({userData: {userName : 'Joe'}});
+    }
+}
+``` 
  
 ### Example of the Script
 
@@ -186,6 +209,7 @@ Message with suggested actions:
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
+- 0.5.0 - support for session messages
 - 0.4.7 - support for suggestActions, minor fixes
 - 0.4.2 - new static method for ConversationMock class - sendMessagesStep, minor fixes   
 - 0.4.0 - new output log, global options support

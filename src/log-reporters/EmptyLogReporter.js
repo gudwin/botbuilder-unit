@@ -35,6 +35,13 @@ EmptyLogReporter.prototype.error = function (step, message) {
 EmptyLogReporter.prototype.warning = function (step, message) {
 
 }
+EmptyLogReporter.prototype.info = function (step, message) {
+
+}
+EmptyLogReporter.prototype.session = function (step, message) {
+
+}
+
 
 
 

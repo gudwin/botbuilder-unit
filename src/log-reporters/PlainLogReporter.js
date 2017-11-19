@@ -46,6 +46,15 @@ PlainLogReporter.prototype.warning = function (step, message) {
 PlainLogReporter.prototype.info = function (step, message) {
   console.log(`#${step} Info: ${this.inspect(message)}`);
 }
+PlainLogReporter.prototype.session = function (step, message) {
+  let output = {
+    userData : Object.assign({}, message.userData),
+    conversationData : Object.assign({}, message.conversationData),
+    privateConversationData : Object.assign({}, message.privateConversationData),
+    sessionState : Object.assign({}, message.sessionState)
+  }
+  console.log(`#${step} Session: ${this.inspect(output)}`);
+}
 
 
 module.exports = PlainLogReporter;

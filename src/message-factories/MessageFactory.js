@@ -1,5 +1,6 @@
 const BotMessageFactory = require('./BotMessageFactory');
 const UserMessageFactory = require('./UserMessageFactory');
+const SessionFactory = require('./SessionFactory');
 
 function MessageFactory( ) {
 
@@ -12,6 +13,10 @@ MessageFactory.produce = function ( config, bot , logReporter ) {
   let isUser = "undefined" != typeof config.user;
   if (  isUser ) {
     return UserMessageFactory.produce(config, bot, logReporter )
+  }
+  let isSession = "undefined" != typeof config.session;
+  if ( isSession ) {
+    return SessionFactory.produce( config, bot ,logReporter);
   }
   throw new Error(`Unsupported config - ${JSON.stringify(config)}`);
 

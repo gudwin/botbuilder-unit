@@ -44,5 +44,8 @@ BaseLogReporter.prototype.warning = function (step, message) {
 BaseLogReporter.prototype.info = function (step, message) {
 
 }
+BaseLogReporter.prototype.session = function (step, message) {
+
+}
 
 module.exports = BaseLogReporter;

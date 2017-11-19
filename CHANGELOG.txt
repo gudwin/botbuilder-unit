@@ -1,17 +1,13 @@
-
---------------------------------
-v 0.5.0
-- [IN PROGRESS] backward compatibility;
-- [IN PROGRESS] session state management support;
-- [IN PROGRESS] intermediate step;
-
-
 - [NO] support for random messages;
 - [NO] debugging steps added: showSession, showDialogStack
 - [NO] support for conversation started by bot
 - [NO] provide a replacement for ConsoleConnector
 
-- [OPTIONAL] support for ignoral messages from user
+
+--------------------------------
+v 0.5.0
+- [OK] session state management support;
+
 --
 - Session management, ability to set and get session values
 - Ability to preconfigure start session value
