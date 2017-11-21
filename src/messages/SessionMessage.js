@@ -1,7 +1,7 @@
 const DEFAULT_ADDRESS = {
   channelId: 'console',
   user: {id: 'user', name: 'User1'},
-  bot: {id: 'bot', name: 'Bocgfcbt'},
+  bot: {id: 'bot', name: 'Bot'},
   conversation: {id: 'Convo1'}
 };
 
@@ -19,7 +19,7 @@ SessionMessage.prototype.initSession = function () {
     });
   });
 }
-SessionMessage.prototype.updateSession = function (session) {
+SessionMessage.prototype.updateSessionState = function (session) {
   if ("function" == typeof this.config.session) {
     return new Promise((resolve, reject) => {
       this.config.session(session).then((response) => {
@@ -57,7 +57,7 @@ SessionMessage.prototype.send = function (step) {
       .then((session) => {
         if (!session) {
           let handler = (session) => {
-            this.updateSession(session)
+            this.updateSessionState(session)
               .then(() => {
                 this.logger.session(step, session);
                 this.bot.removeListener('routing', handler);
@@ -68,7 +68,7 @@ SessionMessage.prototype.send = function (step) {
           this.bot.addListener('routing', handler);
           resolve();
         } else {
-          this.updateSession(session).then((session) =>{
+          this.updateSessionState(session).then((session) =>{
             this.logger.session(step, session);
             resolve(session);
           },reject);

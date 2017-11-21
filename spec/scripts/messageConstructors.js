@@ -11,7 +11,7 @@ module.exports = [
     }
   },
   {
-    "bot": function (bot, message, done) {
+    "bot": function (bot, message) {
       let fixture = 'You typed: Hello world!';
       if (message.text == fixture) {
         return Promise.resolve();
