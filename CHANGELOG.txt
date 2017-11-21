@@ -1,7 +1,19 @@
+- [NO] support for several parallel conversations
+- [NO] provide a pipeline for deployment
+- [NO] support filters in Suggested actions
+- [NO] provide a set of examples
+  -- timmy (hello world)
+  -- session management
+  -- managing startup dialog
 - [NO] support for random messages;
 - [NO] debugging steps added: showSession, showDialogStack
 - [NO] support for conversation started by bot
 - [NO] provide a replacement for ConsoleConnector
+
+--------------------------------
+v 0.5.1
+- [] setup startup dialog;
+- [] examples
 
 
 --------------------------------

@@ -9,7 +9,6 @@ function SessionMessage(config, bot, logger) {
   this.config = config;
   this.bot = bot;
   this.logger = logger;
-  this.dialog = '/';
 
 }
 SessionMessage.prototype.initSession = function () {
@@ -79,3 +78,4 @@ SessionMessage.prototype.send = function (step) {
 }
 
 module.exports = SessionMessage;
+module.exports.DEFAULT_ADDRESS = DEFAULT_ADDRESS;

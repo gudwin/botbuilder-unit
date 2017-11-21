@@ -117,6 +117,8 @@ There are three message types supported, they identified by attribute:
  - **session**, to manipulate session and startup dialog
  - ***endConversation**, to specify that conversation will be finished
  - **typing**, to specify if you want to validate that [typing indicator](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator) sent
+ - **dialog**, sets current dialog for bot instance, could be used together with **args** option 
+ - **args**, set default arguments for bot instance, could be used together with **dialog** option
    
   
 ### User Messages
@@ -213,6 +215,7 @@ Example:
     "endConversation" : true
 }
 ```
+More about ending conversation you could find in [official documentation](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-manage-conversation-flow#end-conversation).
 
 ### Validating typing indicator
 
@@ -222,6 +225,17 @@ Example:
     "typing": true
 }
 ```
+
+### Set Current Dialog 
+
+You could specify a dialog _id_ that will be set as active or default dialog for the bot. In case, if you call that function in the middle of conversation (when session conversation object already created) this message will [replace](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-replace)
+See an Example:
+
+It is also possible to specify an arguments to the function:
+ 
+**Important!** the message produces a side effect as the function manipulates with attributes: **settings.defaultDialogId** and **settings.defaultDialogArgs** 
+
+You also could specify a _filter_ function. The Library will pass current instance of bot as argument into the function:  
  
 ### Example of the Script
 

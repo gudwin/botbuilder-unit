@@ -47,8 +47,8 @@ describe('Support for session management functions', function () {
       }
     ];
     unit(bot, script).then(done,(e) => {
-      console.log('Aaaaf fuck!')
-      console.log(e);
+      fail('Aaaah... Fuck!')
+      done();
     });
   });
   it('Should support filtering callbacks ', (done) => {
