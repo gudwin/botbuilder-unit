@@ -13,6 +13,7 @@
  
 ## Glossary
 - **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
+- **filter** function - a custom function that will be called by Library. The function should return a [Promise](https://promisesaplus.com/).
 
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
 The Library simulates conversation between bot and the end user. 
@@ -112,9 +113,13 @@ The Script is just an array with simple objects (at this version) where every it
 ### Script Messages
 There are three message types supported, they identified by attribute:
  - **user**, for sending messages to bot
- - **bot**, to specify an expected message from bot
- - **session**, to manipulate session
+ - **bot**, to specify an expected message from bot  
+ - **session**, to manipulate session and startup dialog
+ - ***endConversation**, to specify that conversation will be finished
+ - **typing**, to specify if you want to validate that [typing indicator](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator) sent
+   
   
+### User Messages
 
 If the message is from the user, than message object should look like this:
 
@@ -124,6 +129,17 @@ If the message is from the user, than message object should look like this:
 }
 ```
 
+Or, specify a _filter_ function. The Library will pass an argument to the function - an instance of bot being tested. A function must return a Promise. An resolved value of Promise (supposed to be a string) will be passed to the bot:
+```javascript
+{
+    "user": function (bot) {
+      return Promise.resolve('Hello world!');
+    }
+}
+```
+
+### Expected Responses 
+
 In case, if the message is from the bot, than:
 
 ```javascript
@@ -132,7 +148,7 @@ In case, if the message is from the bot, than:
  }
 ```
 
-It is possible to validate bot messages with RegExps
+It is possible to validate bot messages with RegExps:
  
 ```javascript
  {
@@ -140,7 +156,25 @@ It is possible to validate bot messages with RegExps
  }
 ```
 
-Message with suggested actions:
+or with a _filter_ function. The Library will pass two arguments into the function:
+- **bot**, a bot instance itself,
+- **receivedMessage**, a message object received from bot 
+
+Next example presents usage of filter function, that validates if chatbot returned a Number in range of 0 to 100:
+```javascript
+ {
+     "bot" : function ( bot, receivedMessage)  {
+        let value = parseInt(receivedMessage.text);
+        if (( value >= 0 ) && (value <=100)) {
+            return Promise.resolve('success');
+        } else {
+            return Promise.reject('failure');
+        }
+     }
+ }
+```
+
+If you want to validate suggested actions of the message:
 
 ```javascript
 {
@@ -152,23 +186,42 @@ Message with suggested actions:
 }
 ```
 
-Message that changes session, looks:
+### Session Management 
+ 
+It is possible to setup a state for session:
 ```javascript
 {
     "session" : {userData: {userName : 'Joe'}}
 }
 ```
 
-**All messages support handler function to be passeda as an attribute value**, handler always should return Promise object
- 
-Message that changes session, looks:
+Another option is to specify a _filter_ function. Current session object will be passed as a first argument into the filter:  
 ```javascript
 {
     "session" : function (session) {
-         return Promise.resolve({userData: {userName : 'Joe'}});
+        session.userDta.userName = 'Joe';
+        return Promise.resolve(session);
     }
 }
 ``` 
+
+### Validating ending of conversation
+
+Example:
+```javascript
+{
+    "endConversation" : true
+}
+```
+
+### Validating typing indicator
+
+Example:
+```javacript
+{
+    "typing": true
+}
+```
  
 ### Example of the Script
 
@@ -209,6 +262,7 @@ Message that changes session, looks:
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
+- 0.5.1 - documentation updates, support for startup dialog, refactorings;
 - 0.5.0 - support for session messages
 - 0.4.7 - support for suggestActions, minor fixes
 - 0.4.2 - new static method for ConversationMock class - sendMessagesStep, minor fixes   
