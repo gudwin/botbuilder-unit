@@ -93,7 +93,7 @@ BeautyLogReporter.prototype.getDate = function () {
 }*/
 
 const BeautyLogReporter = require('../src/log-reporters/BeautyLogReporter');
-
+const PlainLogReporter = require('../src/log-reporters/PlainLogReporter');
 
 let script = [
   {user: 'Hi'},
@@ -109,7 +109,8 @@ let script = [
   {endConversation: true},
   {bot: 'Of I forgot to mention'}
 ]
-let logger = new BeautyLogReporter();
+let logger = new PlainLogReporter();
+//let logger = new BeautyLogReporter();
 logger.newScript(script);
 logger.messageSent(0, script[0])
 logger.messageReceived(1, script[1]);
@@ -127,3 +128,16 @@ logger.expectationError(11, {bot: 'I want to add...'}, script[11]);
 logger.warning(12, 'Some important information to notice!');
 logger.error(12, {customError: 'Oh, well! I just happenned...'});
 logger.info(13, {a:1,b:2,text: 'Oh, well! I just happenned...'})
+logger.startupDialog(14, '/startup/',{a:1,b:2,text: 'Oh, well! I just happenned...'});
+logger.session(15, {
+  conversationData : {
+    a : 'b'
+  },
+  userData : {
+    c : 'd'
+  },
+  privateConversationData : {
+    x : 'y'
+  },
+  sessionState : 1
+})

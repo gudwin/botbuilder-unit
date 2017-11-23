@@ -46,12 +46,12 @@ PlainLogReporter.prototype.warning = function (step, message) {
 PlainLogReporter.prototype.info = function (step, message) {
   console.log(`#${step} Info: ${this.inspect(message)}`);
 }
-PlainLogReporter.prototype.session = function (step, message) {
+PlainLogReporter.prototype.session = function (step, session) {
   let output = {
-    userData : Object.assign({}, message.userData),
-    conversationData : Object.assign({}, message.conversationData),
-    privateConversationData : Object.assign({}, message.privateConversationData),
-    sessionState : Object.assign({}, message.sessionState)
+    userData : Object.assign({}, session.userData),
+    conversationData : Object.assign({}, session.conversationData),
+    privateConversationData : Object.assign({}, session.privateConversationData),
+    sessionState : Object.assign({}, session.sessionState)
   }
   console.log(`#${step} Session: ${this.inspect(output)}`);
 }

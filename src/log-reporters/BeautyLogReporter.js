@@ -167,14 +167,22 @@ BeautyLogReporter.prototype.info = function (step, message) {
 }
 
 BeautyLogReporter.prototype.session = function (step, message) {
-  this.outputCentralized(`SET SESSION ON STEP #${step}`, colors.yellow);
   let output = {
     userData : Object.assign({}, message.userData),
     conversationData : Object.assign({}, message.conversationData),
     privateConversationData : Object.assign({}, message.privateConversationData),
     sessionState : Object.assign({}, message.sessionState)
   }
-  console.log(colors.yellow(this.inspect(output)));
+  output = this.inspect(output);
+  this.isLeftPaddingEnabled = false;
+
+  this.outputMessageBox(step, output, 'Session set:', colors.blue);
+}
+BeautyLogReporter.prototype.startupDialog = function (step, dialog, args) {
+  this.isLeftPaddingEnabled = false;
+  this.outputMessageBox(step, dialog, 'Next Dialog:', colors.blue);
+  this.outputMessageBox(step, this.inspect(args), 'ARGS Set:', colors.blue);
+
 }
 
 module.exports = BeautyLogReporter;
