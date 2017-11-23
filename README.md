@@ -188,6 +188,19 @@ If you want to validate suggested actions of the message:
 }
 ```
 
+You could use _filter_ function to validate suggested actions:
+```javascript
+{
+    "bot" : function ( bot, receivedMessage ) {
+        if ( receviedMessage.suggestedActions.length == 2 ) {
+            return Promise.resolve('success');
+        } else {
+            return Promise.reject('fail');
+        }
+    }
+}
+```
+
 ### Session Management 
  
 It is possible to setup a state for session:
