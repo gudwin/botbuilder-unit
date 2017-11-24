@@ -294,6 +294,7 @@ You also could specify a _filter_ function. The Library will pass current instan
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
+- 0.5.3 - fixes, examples;
 - 0.5.2 - missed setDialogMessageSpec specification;
 - 0.5.1 - documentation updates, support for startup dialog, refactorings;
 - 0.5.0 - support for session messages
