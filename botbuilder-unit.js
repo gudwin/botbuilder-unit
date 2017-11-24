@@ -17,12 +17,12 @@ const SetDialogMessage = require('./src/messages/SetDialogMessage');
 function detectReporter() {
   switch (process.env.BOTBUILDERUNIT_REPORTER) {
     case 'beauty':
-      return new BeautyLogReporter();
+      return (new BeautyLogReporter());
     case 'empty' :
-      return new EmptyLogReporter();
+      return (new EmptyLogReporter());
     case 'plain' :
     default:
-      return new PlainLogReporter();
+      return (new PlainLogReporter());
   }
 }
 
@@ -79,10 +79,16 @@ function testBot(bot, messages, options) {
       }
 
     }
+    function isNextSendNeeded() {
+      let shouldProceed = messages.length && (
+          messages[0].session || messages[0].user
+          || (messages[0].dialog || messages[0].args)
+        );
+      return shouldProceed;
+    }
 
     function next() {
       if (!messages.length) {
-
         if (!finished) {
           finished = true;
           getLogReporter().scriptFinished(step);
@@ -91,25 +97,21 @@ function testBot(bot, messages, options) {
         }
         return;
       }
-      let shouldProceed = messages[0] && (
-          (messages[0].session || messages[0].user)
-          || (messages[0].dialog || messages[0].args)
-        );
-      if (shouldProceed) {
+
+      if (isNextSendNeeded()) {
         let messageConfig = messages.shift();
         step++;
-        MessageFactory.produce(messageConfig, bot, getLogReporter())
-          .send(step)//
-          .then(function () {
-            if (messages.length && (messages[0].user || messages[0].session)) {
-              setTimeout(function () {
+        setTimeout(() => {
+          MessageFactory.produce(messageConfig, bot, getLogReporter())
+            .send(step)
+            .then(() => {
                 next();
-              }, NEXT_USER_MESSAGE_TIMEOUT)
-            }
-          })
-          .catch(function (err) {
-            fail(err)
-          });
+            })
+            .catch(function (err) {
+              fail(err)
+            });
+        }, NEXT_USER_MESSAGE_TIMEOUT );
+      } else {
       }
 
     }
@@ -167,8 +169,9 @@ function testBot(bot, messages, options) {
 module.exports = testBot;
 module.exports.config = {
   timeout: process.env.BOTBUILDERUNIT_TEST_TIMEOUT ? process.env.BOTBUILDERUNIT_TEST_TIMEOUT : DEFAULT_TEST_TIMEOUT,
-  reporter: process.env.BOTBUILDERUNIT_REPORTER ? detectReporter() : new PlainLogReporter()
+  reporter: detectReporter()
 };
+
 module.exports.PlainLogReporter = PlainLogReporter;
 module.exports.BeautyLogReporter = BeautyLogReporter;
 module.exports.EmptyLogReporter = EmptyLogReporter;

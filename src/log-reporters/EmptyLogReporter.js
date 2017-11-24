@@ -1,3 +1,5 @@
+'use strict';
+
 const BaseLogReporter = require('./BaseLogReporter');
 
 function EmptyLogReporter() {

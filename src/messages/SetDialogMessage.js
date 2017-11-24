@@ -22,7 +22,7 @@ SetDialogMessage.prototype.send = function (step) {
           if ( "undefined" != typeof this.config.args ) {
             this.bot.settings.defaultDialogArgs = this.config.args ;
           }
-          resolve();
+
         } else {
           let dialog = this.config.dialog || this.bot.settings.defaultDialogId || '/';
           let dialogArgs = this.config.arguments || this.bot.settings.defaultDialogArgs || undefined;
@@ -32,9 +32,16 @@ SetDialogMessage.prototype.send = function (step) {
           } catch (e ) {
             reject(e);
           }
-          resolve();
+
         }
       })
+    .then(() => {
+      this.logger.startupDialog(step, this.config.dialog, this.config.args);
+      resolve();
+    })
+    .catch((error) => {
+      reject(error);
+    })
   })
 
 }

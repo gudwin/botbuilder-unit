@@ -24,7 +24,7 @@ BeautyLogReporter.prototype.refreshDimensions = function (msg) {
   this.columnsPerRow = Math.max(process.stdout.columns, MIN_COLUMNS_PER_ROW);
   this.contentColumnsPerRow = Math.floor(2 / 3 * this.columnsPerRow);
 }
-BeautyLogReporter.prototype.inspect = function (message) {
+BeautyLogReporter.prototype.normalizeOutput = function (message) {
   return util.inspect(message, {depth: 4, color: true, showHidden: true})
 }
 BeautyLogReporter.prototype.outputCentralized = function (msg, colorFunc) {
@@ -107,7 +107,7 @@ BeautyLogReporter.prototype.scriptFinished = function (step) {
 
 }
 BeautyLogReporter.prototype.messageReceived = function (step, message) {
-  let outputMessage = message.text ? message.text : this.inspect(message);
+  let outputMessage = message.text ? message.text : this.normalizeOutput(message);
   if ( message.suggestedActions ) {
     if ( message.suggestedActions.actions ) {
       outputMessage += `\n\n--\nSuggested actions:`;
@@ -116,7 +116,7 @@ BeautyLogReporter.prototype.messageReceived = function (step, message) {
       });
     }
   }
-  //let outputMessage = this.inspect(message);
+  //let outputMessage = this.normalizeOutput(message);
   this.isLeftPaddingEnabled = false;
 
   this.outputMessageBox(step, outputMessage, 'Bot wrote:', colors.blue);
@@ -132,7 +132,7 @@ BeautyLogReporter.prototype.messageSent = function (step, message) {
   if ("function" == typeof message.user) {
     outputMessage = message.user.toString();
   } else {
-    outputMessage = message.user ? message.user : this.inspect(message);
+    outputMessage = message.user ? message.user : this.normalizeOutput(message);
   }
 
   this.isLeftPaddingEnabled = true;
@@ -144,7 +144,7 @@ BeautyLogReporter.prototype.expectationError = function (step, received, expecte
     this.finalReport.error = expected;
   }
   this.outputCentralized(`EXPECTATION ERROR ON STEP #${step}`, colors.red)
-  let expectedErrorMsg = expected.bot ? expected.bot : this.inspect(( expected ));
+  let expectedErrorMsg = expected.bot ? expected.bot : this.normalizeOutput(( expected ));
   this.outputMessageBox(step, expectedErrorMsg, 'Expected Message:', colors.red);
 }
 BeautyLogReporter.prototype.error = function (step, message) {
@@ -153,7 +153,7 @@ BeautyLogReporter.prototype.error = function (step, message) {
     this.finalReport.error = message;
   }
   this.outputCentralized(`ERROR ON STEP #${step}`, colors.red);
-  console.log(colors.red(this.inspect(message)));
+  console.log(colors.red(this.normalizeOutput(message)));
   this.isLeftPaddingEnabled = false;
 }
 BeautyLogReporter.prototype.warning = function (step, message) {
@@ -163,7 +163,7 @@ BeautyLogReporter.prototype.warning = function (step, message) {
 }
 BeautyLogReporter.prototype.info = function (step, message) {
   this.outputCentralized(`INFO ON STEP #${step}`, colors.yellow);
-  console.log(colors.yellow(this.inspect(message)));
+  console.log(colors.yellow(this.normalizeOutput(message)));
 }
 
 BeautyLogReporter.prototype.session = function (step, message) {
@@ -173,16 +173,17 @@ BeautyLogReporter.prototype.session = function (step, message) {
     privateConversationData : Object.assign({}, message.privateConversationData),
     sessionState : Object.assign({}, message.sessionState)
   }
-  output = this.inspect(output);
+  output = this.normalizeOutput(output);
   this.isLeftPaddingEnabled = false;
 
   this.outputMessageBox(step, output, 'Session set:', colors.blue);
 }
 BeautyLogReporter.prototype.startupDialog = function (step, dialog, args) {
   this.isLeftPaddingEnabled = false;
+  dialog = dialog || '';
+  args = args || '';
   this.outputMessageBox(step, dialog, 'Next Dialog:', colors.blue);
-  this.outputMessageBox(step, this.inspect(args), 'ARGS Set:', colors.blue);
-
+  this.outputMessageBox(step, this.normalizeOutput(args), 'ARGS Set:', colors.blue);
 }
 
 module.exports = BeautyLogReporter;

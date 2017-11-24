@@ -1,7 +1,5 @@
 'use strict';
-
 function BaseLogReporter() {
-
 }
 
 BaseLogReporter.prototype.newScript = function (messages, scriptName) {
