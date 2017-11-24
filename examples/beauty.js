@@ -1,99 +1,8 @@
-/*var colors = require('colors');
-const MIN_COLUMNS_PER_ROW = 40;
-function BeautyLogReporter() {
-  this.columnsPerRow = 0;
-  this.contentColumnsPerRow = 0;
-  this.isLeftPaddingEnabled = false;
-  this.step = 0;
-}
-BeautyLogReporter.prototype.refreshDimensions = function (msg) {
-  this.columnsPerRow = Math.max(process.stdout.columns, MIN_COLUMNS_PER_ROW);
-  this.contentColumnsPerRow = Math.floor(2 / 3 * this.columnsPerRow);
-  if (this.contentColumnsPerRow > msg.length + 4) {
-    this.contentColumnsPerRow = msg.length + 4;
-  }
-}
-BeautyLogReporter.prototype.outputUser = function (msg) {
-  this.isLeftPaddingEnabled = true;
-  this.refreshDimensions(msg);
-  this.outputMessageBox(msg, 'User wrote:', colors.green);
-  this.step++;
-}
-BeautyLogReporter.prototype.outputBot = function (msg) {
-  this.isLeftPaddingEnabled = false;
-  this.refreshDimensions(msg);
-  this.outputMessageBox(msg, 'Bot wrote:', colors.blue);
-  ;
-
-  this.step++;
-}
-BeautyLogReporter.prototype.outputCentralized = function (msg, colorFunc) {
-  if (!colorFunc) {
-    colorFunc = colors.black;
-  }
-  let offset1 = Math.floor((this.columnsPerRow - msg.length) / 2);
-  let offset2 = this.columnsPerRow - offset1 - msg.length;
-  let result = '='.repeat(offset1) + msg + '='.repeat(offset2);
-  console.log();
-  console.log(colorFunc(result));
-  console.log();
-}
-BeautyLogReporter.prototype.outputEndConversation = function (msg) {
-
-  this.outputCentralized(' END OF CONVERSATION ')
-
-}
-BeautyLogReporter.prototype.outputScriptFinished = function (msg) {
-  this.outputCentralized(' END OF SCRIPT ', colors.yellow);
-}
-BeautyLogReporter.prototype.outputMessageBox = function (msg, title, colorFunc) {
-  this.log('#' + this.step + ' ' + this.getDate() + `, ${title}`, colors.black);
-  this.log(('+' + '-'.repeat(this.contentColumnsPerRow - 2) + '+'), colorFunc);
-  this.wrap(msg, colorFunc);
-  this.log(('+' + '-'.repeat(this.contentColumnsPerRow - 2) + '+'), colorFunc);
-}
-BeautyLogReporter.prototype.wrap = function (msg, colorFunc) {
-  let moreThanOnce = false;
-  while (msg.length > 0) {
-    let chunk = msg.substr(0, this.contentColumnsPerRow - 4);
-    if (chunk.length < this.contentColumnsPerRow - 4) {
-      chunk = chunk + ' '.repeat(this.contentColumnsPerRow - 4 - chunk.length);
-
-    } else {
-    }
-    chunk = '| ' + chunk + ' |';
-
-    msg = msg.substr(this.contentColumnsPerRow - 4);
-    this.log(chunk, colorFunc);
-  }
-}
-
-BeautyLogReporter.prototype.log = function (msg, colorFunc) {
-
-  if (this.isLeftPaddingEnabled) {
-    if (this.columnsPerRow > msg.length) {
-      msg = ' '.repeat(this.columnsPerRow - msg.length) + msg;
-    }
-  }
-  //console.log(msg.length);
-  console.log(colorFunc(msg));
-}
-BeautyLogReporter.prototype.outputExpectationError = function (received, expected) {
-  this.isLeftPaddingEnabled = false;
-  this.outputCentralized(`ERROR ON STEP ${this.step} ENCOUNTERED`, colors.red)
-  this.refreshDimensions(received);
-  this.outputMessageBox(received, 'Bot wrote:', colors.red);
-  this.refreshDimensions(expected);
-  this.outputMessageBox(expected, 'Expected Message:', colors.blue);
-
-}
-BeautyLogReporter.prototype.getDate = function () {
-  let date = new Date();
-  return date.toTimeString().split(' ')[0];
-}*/
 
 const BeautyLogReporter = require('../src/log-reporters/BeautyLogReporter');
 const PlainLogReporter = require('../src/log-reporters/PlainLogReporter');
+const BaseLogReporter = require('../src/log-reporters/BaseLogReporter');
+const EmptyLogReporter = require('../src/log-reporters/EmptyLogReporter');
 
 let script = [
   {user: 'Hi'},
@@ -109,8 +18,11 @@ let script = [
   {endConversation: true},
   {bot: 'Of I forgot to mention'}
 ]
-let logger = new PlainLogReporter();
-//let logger = new BeautyLogReporter();
+//let logger = new BaseLogReporter();
+//let logger = new PlainLogReporter();
+let logger = new BeautyLogReporter();
+//let logger = new EmptyLogReporter();
+console.log(logger);
 logger.newScript(script);
 logger.messageSent(0, script[0])
 logger.messageReceived(1, script[1]);

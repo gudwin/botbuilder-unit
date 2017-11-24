@@ -1,33 +1,45 @@
-const unit = require('../botbuilder-unit');
+const unit = require('../../botbuilder-unit');
 const builder = require('botbuilder');
 
-// This array, also called a script. It will be used to validate conversation with user
 let script = [
   {
-    "user": "hi"
+    session: {
+      userData: {
+        name: 'Gisma'
+      }
+    }
   },
   {
-    "bot": "How should I call you?"
+    user: 'Hi'
   },
   {
-    "user": "Timmy"
+    bot: 'Hello, Gisma!'
   },
   {
-    "bot": "Nice to meet you, \"Timmy\"!"
+    session: {
+      userData: {
+        name: 'Yulia'
+      }
+    }
+  },
+  {
+    user: 'Hi'
+  },
+  {
+    bot: "Hello, Yulia!"
   }
 ];
 
-// Setting up a bot
+
 let connector = new builder.ConsoleConnector().listen();
 bot = new builder.UniversalBot(connector);
 bot.dialog('/', [
-  session => builder.Prompts.text(session, 'How should I call you?'),
-  (session, response) => session.endDialog(`Nice to meet you, ${JSON.stringify(response.response)}!`)
+  session => session.endDialog(`Hello, ${session.userData.name}!`)
 ]);
 
 // Executing test
 unit(bot, script, {
-  title: 'Your first test script',
+  title: 'Sample With Session Sanagement',
   reporter : new unit.BeautyLogReporter() // Display log in messenger-like style, with colors
 }).then(() => {
   // If test finished successfully

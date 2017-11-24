@@ -69,4 +69,18 @@ describe('Managing current dialog of conversation', function () {
       done();
     });
   })
+  it('Test that arguments captchured without dialog argument', (done) => {
+    let script = [
+      {dialog: "/named-greeting", args : {username : "BadManMe"}},
+      {user: "Hi"},
+      {bot: 'Hello, BadManMe!'},
+      {args : {username : "Gisma"}},
+      {user: "Hi"},
+      {bot: 'Hello, Gisma!'}
+    ];
+    unit(bot, script).then(done, (e) => {
+      fail('Impossible case');
+      done();
+    });
+  })
 });

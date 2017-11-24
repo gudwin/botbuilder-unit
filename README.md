@@ -71,6 +71,11 @@ unit(bot, script, {
 
 ```
 
+## Examples:
+- [Base Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/01-timmy/timmy.js?raw=true)
+- [Session Management Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/02-session/session.js?raw=true)
+- [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
+
 ## Execute Script
  ```node ./test-script.js```
  
