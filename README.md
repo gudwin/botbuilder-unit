@@ -3,13 +3,6 @@
 **Unfortunately, development just started and documentation is not ready. So, please study tests specifications.** 
 
 
-## Requied Actions
-- [ ] Complete message configuration section
-- [ ] Complete script configuration section 
-- [ ] Complete global configuration section
-- [ ] Update a Quick Start Section (remove Jasmine)
-- [ ] Describe BaseLogReporter interface
-- [ ] Provide an example for the ConversationMock class
  
 ## Glossary
 - **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
@@ -294,6 +287,7 @@ You also could specify a _filter_ function. The Library will pass current instan
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Changelog
+- 0.5.4 - TOC added into documentation, basic test for proactive messages;
 - 0.5.3 - fixes, examples;
 - 0.5.2 - missed setDialogMessageSpec specification;
 - 0.5.1 - documentation updates, support for startup dialog, refactorings;
