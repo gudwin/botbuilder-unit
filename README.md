@@ -1,12 +1,42 @@
-# botbuilder-unit
+[![GitHub version](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit.svg)](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit)
 
-**Unfortunately, development just started and documentation is not ready. So, please study tests specifications.** 
+Table of Contents
+=================
 
+   * [Table of Contents](#table-of-contents)
+   * [Glossary](#glossary)
+   * [Introduction](#introduction)
+   * [Quick Start](#quick-start)
+      * [Install library](#install-library)
+      * [Create Test Script](#create-test-script)
+      * [Execute Script](#execute-script)
+   * [Installation](#installation)
+   * [Configuration](#configuration)
+      * [Global options](#global-options)
+         * [As an Environment Variable](#as-an-environment-variable)
+         * [As a part of the Library module.exports](#as-a-part-of-the-library-moduleexports)
+      * [Script level](#script-level)
+         * [Script Messages](#script-messages)
+         * [User Messages](#user-messages)
+         * [Expected Responses](#expected-responses)
+         * [Session Management](#session-management)
+         * [Validating ending of conversation](#validating-ending-of-conversation)
+         * [Validating typing indicator](#validating-typing-indicator)
+         * [Set Current Dialog](#set-current-dialog)
+         * [Example of the Script](#example-of-the-script)
+   * [Mocking conversation](#mocking-conversation)
+      * [ConversationMock](#conversationmock)
+         * [new ConversationMock( steps )](#new-conversationmock-steps-)
+         * [ConversationMock.prototype](#conversationmockprototype)
+         * [ConversationMock static methods](#conversationmock-static-methods)
+   * [Examples](#examples)
+   * [Changelog](#changelog)
 
- 
-## Glossary
+# Glossary
 - **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
 - **filter** function - a custom function that will be called by Library. The function should return a [Promise](https://promisesaplus.com/).
+
+# Introduction
 
 This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
 The Library simulates conversation between bot and the end user. 
@@ -63,11 +93,6 @@ unit(bot, script, {
 })
 
 ```
-
-## Examples:
-- [Base Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/01-timmy/timmy.js?raw=true)
-- [Session Management Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/02-session/session.js?raw=true)
-- [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
 
 ## Execute Script
  ```node ./test-script.js```
@@ -286,8 +311,13 @@ You also could specify a _filter_ function. The Library will pass current instan
   - **messages** argument is an array of strings, these messages will be sent to user; 
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
+# Examples
+- [Base Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/01-timmy/timmy.js?raw=true)
+- [Session Management Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/02-session/session.js?raw=true)
+- [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
+
 # Changelog
-- 0.5.4 - TOC added into documentation, basic test for proactive messages;
+- 0.5.4 - TOC added into documentation, basic test for proactive messages, basic code coverage report added;
 - 0.5.3 - fixes, examples;
 - 0.5.2 - missed setDialogMessageSpec specification;
 - 0.5.1 - documentation updates, support for startup dialog, refactorings;

@@ -1,14 +1,40 @@
 - [NO] support for several parallel conversations
 - [NO] provide a pipeline for deployment
-- [NO] support filters in Suggested actions
-- [NO] provide a set of examples
+- [NO] ability to test recognizers
+- [NO] mocking recognizers
+ -- run tests
+ --
+ -- validate that samples still valid
+ -- inject TOC
+ -- message that code ready to be published
+
+
+- [NO] HowTo - TDD for
+- [NO] Documentation updates
+
+
+
+--------------------------------
+v 0.5.4
+- [OK] coverage deployment step
+- build & inject TOC
+
+--------------------------------
+v 0.5.3
+- [NO] support for conversation started by bot
+- [NO] support for custom steps
+- [NO] Ability to inject argument entities into message?
+- [NO] Documentation updates
+ -- build & inject TOC
+
+
+--------------------------------
+v 0.5.3
+- [OK] provide a set of examples
   -- timmy (hello world)
   -- session management
   -- managing startup dialog
-- [NO] support for random messages;
-- [NO] debugging steps added: showSession, showDialogStack
-- [NO] support for conversation started by bot
-- [NO] provide a replacement for ConsoleConnector
+
 
 --------------------------------
 v 0.5.1
