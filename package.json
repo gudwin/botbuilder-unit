@@ -3,23 +3,28 @@
     "node": "7.8.0"
   },
   "name": "botbuilder-unit",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Unit tests for chatbot dialogs",
   "main": "botbuilder-unit.js",
   "dependencies": {
     "botbuilder": "^3.8.2",
-    "colors" : "^1.1.2"
+    "colors": "^1.1.2"
   },
   "devDependencies": {
-    "jasmine": "^2.5.3",
-    "jasmine-terminal-reporter": "^1.0.3",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "gulp": "^3.9.1",
+    "gulp-babel": "^7.0.0",
+    "gulp-coverage": "^0.3.38",
     "gulp-jasmine": "^2.4.2",
-    "gulp-watch": "^4.3.11"
+    "gulp-watch": "^4.3.11",
+    "tap": "^11.0.0",
+    "gulp-tap": "^1.0.1",
+    "jasmine": "^2.5.3",
+    "jasmine-terminal-reporter": "^1.0.3"
   },
   "scripts": {
-    "test": "gulp tests ",
-    "test_debug": "export NODE_DEBUG=botbuilder; node ./spec/runner.js "
+    "test": "export NODE_DEBUG=botbuilder; node ./spec/runner.js "
   },
   "bugs": {
     "url": "https://github.com/gudwin/botbuilder-unit/issues",

@@ -4,14 +4,15 @@ const FINISH_TIMEOUT = 20;
 const NEXT_USER_MESSAGE_TIMEOUT = 20;
 const DEFAULT_TEST_TIMEOUT = 10000;
 
-const MessageFactory = require('./src/message-factories/MessageFactory');
-const PlainLogReporter = require('./src/log-reporters/PlainLogReporter');
-const EmptyLogReporter = require('./src/log-reporters/EmptyLogReporter');
-const BeautyLogReporter = require('./src/log-reporters/BeautyLogReporter');
-const BotMessage = require('./src/messages/BotMessage');
-const UserMessage = require('./src/messages/UserMessage');
-const SessionMessage = require('./src/messages/SessionMessage');
-const SetDialogMessage = require('./src/messages/SetDialogMessage');
+const SrcBasePath = process.env.BOTBUILDERUNIT_USE_INSTRUMENTED_SOURCE || './src';
+const MessageFactory = require(SrcBasePath + '/message-factories/MessageFactory');
+const PlainLogReporter = require(SrcBasePath + '/log-reporters/PlainLogReporter');
+const EmptyLogReporter = require(SrcBasePath + '/log-reporters/EmptyLogReporter');
+const BeautyLogReporter = require(SrcBasePath + '/log-reporters/BeautyLogReporter');
+const BotMessage = require(SrcBasePath + '/messages/BotMessage');
+const UserMessage = require(SrcBasePath + '/messages/UserMessage');
+const SessionMessage = require(SrcBasePath + '/messages/SessionMessage');
+const SetDialogMessage = require(SrcBasePath + '/messages/SetDialogMessage');
 
 
 function detectReporter() {
@@ -79,12 +80,21 @@ function testBot(bot, messages, options) {
       }
 
     }
-    function isNextSendNeeded() {
-      let shouldProceed = messages.length && (
+
+    /**
+     * Detects, if current step requires an action from the Library.
+     * That happens, for example, if the action is:
+     * - session management message
+     * - message from user should be emulated
+     * - active dialog has to be changed
+     * - defaults dialog arguments should be changed
+     * @returns bool
+     */
+    function isProactiveActionNeeded() {
+      return messages.length && (
           messages[0].session || messages[0].user
           || (messages[0].dialog || messages[0].args)
         );
-      return shouldProceed;
     }
 
     function next() {
@@ -98,19 +108,19 @@ function testBot(bot, messages, options) {
         return;
       }
 
-      if (isNextSendNeeded()) {
+      if (isProactiveActionNeeded()) {
         let messageConfig = messages.shift();
         step++;
         setTimeout(() => {
           MessageFactory.produce(messageConfig, bot, getLogReporter())
             .send(step)
             .then(() => {
-                next();
+              next();
             })
             .catch(function (err) {
               fail(err)
             });
-        }, NEXT_USER_MESSAGE_TIMEOUT );
+        }, NEXT_USER_MESSAGE_TIMEOUT);
       } else {
       }
 
@@ -155,7 +165,8 @@ function testBot(bot, messages, options) {
         }
         else {
           getLogReporter().warning(step, 'Ignoring message (Out of Range)');
-          setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
+          // As more messages could appear, I suppose that is better to track them
+          setTimeout(done, FINISH_TIMEOUT);
         }
       });
     }
@@ -175,7 +186,7 @@ module.exports.config = {
 module.exports.PlainLogReporter = PlainLogReporter;
 module.exports.BeautyLogReporter = BeautyLogReporter;
 module.exports.EmptyLogReporter = EmptyLogReporter;
-module.exports.ConversationMock = require('./src/ConversationMock');
+module.exports.ConversationMock = require(SrcBasePath + '/ConversationMock');
 module.exports.BotMessage = BotMessage;
 module.exports.UserMessage = UserMessage;
 module.exports.SetDialogMessage = SetDialogMessage;
