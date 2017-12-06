@@ -1,3 +1,6 @@
+/* jslint es6 */
+'use strict';
+
 const DEFAULT_ADDRESS = {
   channelId: 'console',
   user: {id: 'user', name: 'User1'},

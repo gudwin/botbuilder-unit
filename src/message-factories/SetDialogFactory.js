@@ -1,3 +1,4 @@
+/* jslint es6 */
 'use strict';
 
 const SetDialogMessage= require('../messages/SetDialogMessage');

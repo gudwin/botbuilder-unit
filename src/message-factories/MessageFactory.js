@@ -1,3 +1,6 @@
+/* jslint es6 */
+'use strict';
+
 const BotMessageFactory = require('./BotMessageFactory');
 const UserMessageFactory = require('./UserMessageFactory');
 const SessionFactory = require('./SessionFactory');
@@ -23,7 +26,7 @@ MessageFactory.produce = function ( config, bot , logReporter ) {
   if ( isSetDialog ) {
     return SetDialogFactory.produce(config, bot, logReporter)
   }
-  throw new Error(`Unsupported config - ${JSON.stringify(config)}`);
+  throw new Error('Unsupported config - ' + JSON.stringify(config));
 
 }
 module.exports = MessageFactory;

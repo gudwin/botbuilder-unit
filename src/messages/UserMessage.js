@@ -1,11 +1,14 @@
+/* jslint es6 */
+'use strict';
+
 function UserMessage(config, bot, logReporter, connector) {
   this.config = config;
   this.afterFunc = config.after || function (config, bot) {
       return Promise.resolve();
-    }
+    };
   this.beforeFunc = config.before || function (config, bot) {
       return Promise.resolve();
-    }
+    };
 
   this.logReporter = logReporter;
   this.bot = bot;
@@ -51,5 +54,5 @@ UserMessage.prototype.send = function (step) {
         reject(err);
       });
   })
-}
+};
 module.exports = UserMessage;

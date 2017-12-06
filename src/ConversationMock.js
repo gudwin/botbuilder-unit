@@ -1,3 +1,6 @@
+/* jslint es6 */
+'use strict';
+
 function ConversationMock(steps) {
   this.steps = steps;
   this.currentStep = 0;

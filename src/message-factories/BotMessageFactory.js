@@ -1,3 +1,4 @@
+/* jslint es6 */
 'use strict';
 
 const BotMessage = require('../messages/BotMessage');

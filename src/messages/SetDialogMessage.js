@@ -1,3 +1,6 @@
+/* jslint es6 */
+'use strict';
+
 const DEFAULT_ADDRESS = require('./SessionMessage').DEFAULT_ADDRESS;
 function SetDialogMessage(config, bot, logger) {
   this.config = config;
