@@ -1,7 +1,11 @@
 - [NO] support for several parallel conversations
 - [NO] provide a pipeline for deployment
-- [NO] ability to test recognizers
+- [NO] ability to mock recognizers
+- [NO] scan for *Script.js files in given folder and automatically run them
+- [NO] provide an example that shows Autoload functionality
 - [NO] mocking recognizers
+- [NO] validation of attachments;
+- [NO] validation of rich cards;
  -- run tests
  --
  -- validate that samples still valid

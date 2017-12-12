@@ -6,6 +6,7 @@ Table of Contents
    * [Table of Contents](#table-of-contents)
    * [Glossary](#glossary)
    * [Introduction](#introduction)
+      * [List of supported features:](#list-of-supported-features)
    * [Quick Start](#quick-start)
       * [Install library](#install-library)
       * [Create Test Script](#create-test-script)
@@ -23,8 +24,7 @@ Table of Contents
          * [Validating ending of conversation](#validating-ending-of-conversation)
          * [Validating typing indicator](#validating-typing-indicator)
          * [Set Current Dialog](#set-current-dialog)
-         * [Example of the Script](#example-of-the-script)
-   * [Mocking conversation](#mocking-conversation)
+   * [Mocking responses from the bot](#mocking-responses-from-the-bot)
       * [ConversationMock](#conversationmock)
          * [new ConversationMock( steps )](#new-conversationmock-steps-)
          * [ConversationMock.prototype](#conversationmockprototype)
@@ -38,10 +38,27 @@ Table of Contents
 
 # Introduction
 
-This Library allows to apply unit testing to Microsoft Bot Framework Chatbots. 
-The Library simulates conversation between bot and the end user. 
+This is a test framework for chatbots leveraging Microsoft Bot Framework Chatbots. At current moment, functional tests supported by the framework. Comperhensive support for unit testing will be implemented in short term future.
 
-As input the Library requires a bot and a script
+As an input the Library requires a bot and a script.
+ 
+> The Library still in an active development, so don't hesitate to propose changes and new features.
+ 
+##  List of supported features:
+ 
+- ability to emulate a conversation between the user and the bot; 
+- ability to setup expected messages from the bot. Supported expectations are:
+  - validation of textual (string) part of response from the bot: by equality or by regular expression;
+  - botbuilder [prompts](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-prompt);
+  - conversation [endings](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-manage-conversation-flow#end-conversation) and typing [indicators](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator);
+  - validation of [suggested actions](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-suggested-actions);
+  - **custom validators**;
+- session state management;
+- active dialog and default params management;
+- timeouts for test;
+- mocking of responses from the bot;
+- "before" and "after" callbacks for each framework step;
+- configurable reporting;
 
 # Quick Start
 
@@ -273,29 +290,12 @@ It is also possible to specify an arguments to the function:
 
 You also could specify a _filter_ function. The Library will pass current instance of bot as argument into the function:  
  
-### Example of the Script
-
-```javascript
-[
-    {
-        "user" : "Hi"
-    },
-    {
-        "bot" : "Welcome back!"
-    },
-    {
-        "bot" : "Hey, now early morning"
-    }
-    {
-        "bot" : "Should I prepare a double of coffee for you?"
-    }
-]
-```
-
-# Mocking conversation
+# Mocking responses from the bot 
  
- If you want to "prototype" conversation flow and see how it looks and feels and only after that to start actual development, than you will need **ConversationMock** class. 
- There is a class that allow you to quickly build conversation flows and integrate them with conversation specs.   
+ Library provides an **ConversationMock** class with purpose to mock responses from the chatbot. Possible use cases for such feature are:
+ 
+- you want to test a recognizer;
+- you want to "prototype" a conversation flow and see how it looks and feels, without real implementation of the dialogs
 
 ## ConversationMock 
 
@@ -317,6 +317,7 @@ You also could specify a _filter_ function. The Library will pass current instan
 - [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
 
 # Changelog
+- 0.5.5 - documentation updates & fixes;
 - 0.5.4 - TOC added into documentation, basic test for proactive messages, basic code coverage report added;
 - 0.5.3 - fixes, examples;
 - 0.5.2 - missed setDialogMessageSpec specification;
