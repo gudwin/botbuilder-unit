@@ -1,4 +1,5 @@
 
+const botbuilder = require('botbuilder');
 const BeautyLogReporter = require('../src/log-reporters/BeautyLogReporter');
 const PlainLogReporter = require('../src/log-reporters/PlainLogReporter');
 const BaseLogReporter = require('../src/log-reporters/BaseLogReporter');
@@ -16,13 +17,14 @@ let script = [
   {user: 'Got that, than I have to say that we are changing plans! We have to switch to Drupal Open Day first, and then close concur issue'},
   {bot: 'Well, I have to say that even a superlong conversation is a not big problem for me. So go on, please proceed with future requiests'},
   {endConversation: true},
-  {bot: 'Of I forgot to mention'}
+  {bot: 'Of I forgot to mention'},
+  {bot: /^for how long/ }
 ]
 //let logger = new BaseLogReporter();
 //let logger = new PlainLogReporter();
 let logger = new BeautyLogReporter();
 //let logger = new EmptyLogReporter();
-console.log(logger);
+//console.log(logger);
 logger.newScript(script);
 logger.messageSent(0, script[0])
 logger.messageReceived(1, script[1]);
@@ -53,3 +55,14 @@ logger.session(15, {
   },
   sessionState : 1
 })
+let step = 15;
+let testMessage = new botbuilder.Message()
+  .address({
+    channelId: 'console',
+    user: { id: 'user', name: 'User1' },
+    bot: { id: 'bot', name: 'Bot' },
+    conversation: { id: 'Convo1' }
+  })
+  .timestamp()
+  .text('Hello world!');
+logger.expectationError(++step, testMessage, {bot: /^for how long/ });

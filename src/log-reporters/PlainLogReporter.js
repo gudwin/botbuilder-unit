@@ -37,7 +37,7 @@ PlainLogReporter.prototype.messageSent = function (step, message) {
   console.log(`#${step} User: ${outputMessage}`);
 }
 PlainLogReporter.prototype.expectationError = function (step, received, expected) {
-  let expectedErrorMsg = expected.bot ? expected.bot : this.normizalizeForOutput(( expected ));
+  let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normizalizeForOutput(( expected ));
   console.error(`#${step} Expectation Error: ${this.normizalizeForOutput(expectedErrorMsg)}`);
 }
 PlainLogReporter.prototype.error = function (step, message) {

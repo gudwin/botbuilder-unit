@@ -144,7 +144,7 @@ BeautyLogReporter.prototype.expectationError = function (step, received, expecte
     this.finalReport.error = expected;
   }
   this.outputCentralized(`EXPECTATION ERROR ON STEP #${step}`, colors.red)
-  let expectedErrorMsg = expected.bot ? expected.bot : this.normalizeOutput(( expected ));
+  let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normalizeOutput(( expected ));
   this.outputMessageBox(step, expectedErrorMsg, 'Expected Message:', colors.red);
 }
 BeautyLogReporter.prototype.error = function (step, message) {
