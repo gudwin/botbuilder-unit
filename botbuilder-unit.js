@@ -1,11 +1,10 @@
 "use strict";
 
 const FINISH_TIMEOUT = 20;
-const NEXT_USER_MESSAGE_TIMEOUT = 20;
 const DEFAULT_TEST_TIMEOUT = 10000;
 
 const SrcBasePath = process.env.BOTBUILDERUNIT_USE_INSTRUMENTED_SOURCE || './src';
-const MessageFactory = require(SrcBasePath + '/message-factories/MessageFactory');
+const MessageFactory = require(SrcBasePath + '/ScriptStepFactory');
 const PlainLogReporter = require(SrcBasePath + '/log-reporters/PlainLogReporter');
 const EmptyLogReporter = require(SrcBasePath + '/log-reporters/EmptyLogReporter');
 const BeautyLogReporter = require(SrcBasePath + '/log-reporters/BeautyLogReporter');
@@ -49,7 +48,6 @@ function testBot(bot, messages, options) {
   return new Promise(function (resolve, reject) {
     var step = 0;
     var finished = false;
-    var connector = bot.connector('console');
 
     function done() {
       finished = true;
@@ -64,75 +62,39 @@ function testBot(bot, messages, options) {
       reject(err);
     }
 
-    function checkBotMessage(message, check, doneCallback) {
-      let validationMessage = MessageFactory.produce(check, bot, getLogReporter());
-      if (validationMessage instanceof BotMessage) {
-        validationMessage.validate(step, message)
-          .then(() => {
-            doneCallback();
-          })
-          .catch((err) => {
-            doneCallback(err);
-          });
-      } else {
-        getLogReporter().expectationError(step, message, check);
-        doneCallback(`STEP #${step}, Active message in a script not a BotMessage. `)
-      }
-
-    }
 
     /**
-     * Detects, if current step requires an action from the Library.
-     * That happens, for example, if the action is:
-     * - session management message
-     * - message from user should be emulated
-     * - active dialog has to be changed
-     * - defaults dialog arguments should be changed
-     * @returns bool
+     * Convert script steps into promises, each step executed after previous
+     * botmessage depends on previous step and bot response
+     * customessage depends on previous step
+     * session message depends on previous step
+     * set dialog message depends on previous step
+     * user message dependes on previos step
      */
-    function isProactiveActionNeeded() {
-      return messages.length && (
-          messages[0].session || messages[0].user
-          || (messages[0].dialog || messages[0].args)
-        );
-    }
-
-    function next() {
-      if (!messages.length) {
-        if (!finished) {
-          finished = true;
-          getLogReporter().scriptFinished(step);
-          setTimeout(done, FINISH_TIMEOUT); // Enable message from connector to appear in current test suite
-        } else {
-        }
-        return;
-      }
-
-      if (isProactiveActionNeeded()) {
-        let messageConfig = messages.shift();
-        step++;
-        setTimeout(() => {
-          MessageFactory.produce(messageConfig, bot, getLogReporter())
-            .send(step)
-            .then(() => {
-              next();
-            })
-            .catch(function (err) {
-              fail(err)
-            });
-        }, NEXT_USER_MESSAGE_TIMEOUT);
-      } else {
-      }
-
-    }
-
-
     function startTesting() {
-      if (messages.length) {
-        getLogReporter().newScript(messages, options.title);
-        step = -1;
-        next();
-      }
+      getLogReporter().newScript(messages, options.title);
+      let startTestingAction = null;
+      let prevStepFinishedPromise = new Promise((resolve, reject) => {
+        startTestingAction = resolve;
+      });
+      let logReporter = getLogReporter();
+
+      messages.forEach((item, i) => {
+        // Where:
+        // i - step
+        // this - is actual config of step
+        let scriptStep = MessageFactory.produce(i, item, bot, logReporter, prevStepFinishedPromise);
+        messages[i] = scriptStep;
+        prevStepFinishedPromise = scriptStep.getStepFinishedPromise()
+        prevStepFinishedPromise.then(() => {
+          step = i;
+        },fail)
+      });
+
+      prevStepFinishedPromise.then(done, fail);
+
+      startTestingAction();
+
     }
 
     function setupTimeout() {
@@ -147,24 +109,27 @@ function testBot(bot, messages, options) {
     }
 
     function setupReplyReceiver() {
+      let extraMessageIndex = messages.length;
       bot.on('send', function (message) {
-        step++;
-        getLogReporter().messageReceived(step, message);
-        if (messages.length) {
-          var check = messages.shift();
+        let found = false;
+        messages.some((step) => {
+          //
+          // As bot could send multiple messages sequentially, next code tries to
+          // secure library from the case when two or more replies will be received by
+          // one step
+          let botReplyFunc = step.receiveBotReply;
+          if (botReplyFunc) {
+            step.receiveBotReply = false;
+            botReplyFunc.call(step, message);
+            found = true;
+            return -1;
+          }
+        })
 
-          callTrigger(check, bot, 'before', message);
-          checkBotMessage(message, check, (err) => {
-            callTrigger(check, bot, 'after', err);
-            if (err) {
-              fail(err);
-            } else {
-              next();
-            }
-          });
-        }
-        else {
-          getLogReporter().warning(step, 'Ignoring message (Out of Range)');
+        if (!found) {
+          getLogReporter().messageReceived(extraMessageIndex,message)
+          getLogReporter().warning(extraMessageIndex, 'Ignoring message (Out of Range)');
+          extraMessageIndex++;
           // As more messages could appear, I suppose that is better to track them
           setTimeout(done, FINISH_TIMEOUT);
         }

@@ -7,13 +7,18 @@ const DEFAULT_ADDRESS = {
   bot: {id: 'bot', name: 'Bot'},
   conversation: {id: 'Convo1'}
 };
+const BaseScriptStep = require('./BaseScriptStep');
 
-function SessionMessage(config, bot, logger) {
-  this.config = config;
-  this.bot = bot;
-  this.logger = logger;
+function SessionMessage(step, config, bot, logReporter, prevStepPromise ) {
+  BaseScriptStep.call(this,step,config,bot,logReporter,prevStepPromise);
 
+  this.stepFinishedPromise = Promise.all([prevStepPromise] ).then(() => {
+    return this.send();
+  });
 }
+SessionMessage.prototype = Object.create(BaseScriptStep.prototype);
+SessionMessage.prototype.constructor = SessionMessage;
+
 SessionMessage.prototype.initSession = function () {
   return new Promise((resolve, reject) => {
     this.bot.loadSession(DEFAULT_ADDRESS, (session) => {
@@ -53,7 +58,7 @@ SessionMessage.prototype.updateSessionState = function (session) {
     return Promise.reject("Unable to storage scalar value" + data);
   }
 }
-SessionMessage.prototype.send = function (step) {
+SessionMessage.prototype.send = function () {
   return new Promise((resolve, reject) => {
     this.initSession()
       .then((session) => {
@@ -61,7 +66,7 @@ SessionMessage.prototype.send = function (step) {
           let handler = (session) => {
             this.updateSessionState(session)
               .then(() => {
-                this.logger.session(step, session);
+                this.logReporter.session(this.step, session);
                 this.bot.removeListener('routing', handler);
                 session.save();
               })
@@ -71,7 +76,7 @@ SessionMessage.prototype.send = function (step) {
           resolve();
         } else {
           this.updateSessionState(session).then((session) =>{
-            this.logger.session(step, session);
+            this.logReporter.session(this.step, session);
             resolve(session);
           },reject);
         }

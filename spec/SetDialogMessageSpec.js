@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 
 describe('Managing current dialog of conversation', function () {

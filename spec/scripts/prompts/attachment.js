@@ -4,7 +4,7 @@ module.exports = [
     "user": "hi"
   },
   {
-    "bot": "Please upload an attachment",
+    "bot": "Please upload an attachment"
   },
   {
     "user": function (bot ) {

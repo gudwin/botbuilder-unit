@@ -1,25 +1,26 @@
 /* jslint es6 */
 'use strict';
 
-function UserMessage(config, bot, logReporter, connector) {
-  this.config = config;
-  this.afterFunc = config.after || function (config, bot) {
-      return Promise.resolve();
-    };
-  this.beforeFunc = config.before || function (config, bot) {
-      return Promise.resolve();
-    };
+const BaseScriptStep = require('./BaseScriptStep');
 
-  this.logReporter = logReporter;
-  this.bot = bot;
-  this.connector = connector;
+function UserMessage(step, config, bot, logReporter, prevStepPromise )  {
+  BaseScriptStep.call(this,step,config,bot,logReporter,prevStepPromise);
+
+
+  this.connector = this.bot.connector('console');
+
+  this.stepFinishedPromise = Promise.all([prevStepPromise] ).then(() => {
+    return this.send();
+  });
 }
+UserMessage.prototype = Object.create(BaseScriptStep.prototype);
+UserMessage.prototype.constructor = UserMessage;
 
-UserMessage.prototype.send = function (step) {
+UserMessage.prototype.send = function () {
   return new Promise((resolve, reject) => {
-    this.logReporter.messageSent(step, this.config);
+    this.logReporter.messageSent(this.step, this.config);
 
-    this.beforeFunc(this.config, this.bot)
+    Promise.resolve()
       .then(() => {
         if ("function" === typeof this.config.user) {
           return this.config.user(this.bot);
@@ -43,16 +44,16 @@ UserMessage.prototype.send = function (step) {
         }
         return true;
       })
-      .then(() => {
-        return this.afterFunc(this.config, this.bot);
-      })
+
       .then(() => {
         resolve();
       })
       .catch((err)=> {
-        this.logReporter.error(step, err);
+        this.logReporter.error(this.step, err);
         reject(err);
       });
   })
 };
+
+
 module.exports = UserMessage;

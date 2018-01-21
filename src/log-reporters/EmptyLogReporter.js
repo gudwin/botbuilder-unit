@@ -28,6 +28,9 @@ EmptyLogReporter.prototype.typing = function (step) {
 EmptyLogReporter.prototype.messageSent = function (step, message) {
 
 }
+EmptyLogReporter.prototype.customStep = function (step, message) {
+
+}
 EmptyLogReporter.prototype.expectationError = function (step, received, expected) {
 
 }

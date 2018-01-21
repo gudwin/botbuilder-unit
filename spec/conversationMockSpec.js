@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Test Suite for Conversation Mock class', function () {
   it('Test Conversation Mock in simple dialog', (done) => {

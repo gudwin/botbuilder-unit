@@ -36,6 +36,15 @@ PlainLogReporter.prototype.messageSent = function (step, message) {
   }
   console.log(`#${step} User: ${outputMessage}`);
 }
+PlainLogReporter.prototype.customStep = function (step, message) {
+  let outputMessage = '';
+  if ("function" == typeof message.custom) {
+    outputMessage = message.custom.toString();
+  } else {
+    outputMessage = message.custom ? message.custom : this.normizalizeForOutput(message);
+  }
+  console.log(`#${step} Custom Validation Step: ${outputMessage}`);
+}
 PlainLogReporter.prototype.expectationError = function (step, received, expected) {
   let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normizalizeForOutput(( expected ));
   console.error(`#${step} Expectation Error: ${this.normizalizeForOutput(expectedErrorMsg)}`);

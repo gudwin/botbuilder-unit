@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 const builder = require('botbuilder');
 describe('Message Constructors Suite:', function () {

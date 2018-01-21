@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Support for session management functions', function () {
 

@@ -138,6 +138,17 @@ BeautyLogReporter.prototype.messageSent = function (step, message) {
   this.isLeftPaddingEnabled = true;
   this.outputMessageBox(step, outputMessage, 'User wrote:', colors.green);
 }
+BeautyLogReporter.prototype.customStep = function (step, message) {
+  let outputMessage = '';
+  if ("function" == typeof message.custom) {
+    outputMessage = message.custom.toString();
+  } else {
+    outputMessage = message.custom ? message.custom : this.normalizeOutput(message);
+  }
+  this.isLeftPaddingEnabled = true;
+  this.outputMessageBox(step, outputMessage, 'Custom Validation Step:', colors.yellow);
+
+}
 BeautyLogReporter.prototype.expectationError = function (step, received, expected) {
   if (false === this.finalReport.firstErrorOnStep) {
     this.finalReport.firstErrorOnStep = step;

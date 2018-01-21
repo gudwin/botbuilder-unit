@@ -3,7 +3,7 @@
     "node": "7.8.0"
   },
   "name": "botbuilder-unit",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "description": "Unit tests for chatbot dialogs",
   "main": "botbuilder-unit.js",
   "dependencies": {
@@ -36,10 +36,12 @@
   },
   "keywords": [
     "botbuilder",
-    "jasmine",
     "tdd",
     "bdd",
     "test",
+    "unit",
+    "bots",
+    "functional testing",
     "chatbot",
     "mbf"
   ],

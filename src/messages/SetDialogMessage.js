@@ -2,11 +2,19 @@
 'use strict';
 
 const DEFAULT_ADDRESS = require('./SessionMessage').DEFAULT_ADDRESS;
-function SetDialogMessage(config, bot, logger) {
-  this.config = config;
-  this.bot = bot;
-  this.logger = logger;
+
+const BaseScriptStep = require('./BaseScriptStep');
+
+function SetDialogMessage(step, config, bot, logReporter, prevStepPromise ) {
+  BaseScriptStep.call(this,step,config,bot,logReporter,prevStepPromise);
+
+  this.stepFinishedPromise = Promise.all([prevStepPromise] ).then(() => {
+    return this.send();
+  });
 }
+SetDialogMessage.prototype = Object.create(BaseScriptStep.prototype);
+SetDialogMessage.prototype.constructor = SetDialogMessage;
+
 SetDialogMessage.prototype.initSession = function () {
   return new Promise((resolve, reject) => {
     this.bot.loadSession(DEFAULT_ADDRESS, (session) => {
@@ -14,7 +22,7 @@ SetDialogMessage.prototype.initSession = function () {
     });
   });
 }
-SetDialogMessage.prototype.send = function (step) {
+SetDialogMessage.prototype.send = function () {
   return new Promise((resolve, reject) => {
     this.initSession()
       .then((session) => {
@@ -30,16 +38,11 @@ SetDialogMessage.prototype.send = function (step) {
           let dialog = this.config.dialog || this.bot.settings.defaultDialogId || '/';
           let dialogArgs = this.config.arguments || this.bot.settings.defaultDialogArgs || undefined;
 
-          try {
-            session.replaceDialog(dialog,dialogArgs);
-          } catch (e ) {
-            reject(e);
-          }
-
+          session.replaceDialog(dialog,dialogArgs);
         }
       })
     .then(() => {
-      this.logger.startupDialog(step, this.config.dialog, this.config.args);
+      this.logReporter.startupDialog(this.step, this.config.dialog, this.config.args);
       resolve();
     })
     .catch((error) => {

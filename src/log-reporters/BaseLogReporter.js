@@ -30,9 +30,13 @@ BaseLogReporter.prototype.typing = function (step) {
 BaseLogReporter.prototype.messageSent = function (step, message) {
 
 }
+BaseLogReporter.prototype.customStep = function (step, message) {
+
+}
 BaseLogReporter.prototype.expectationError = function (step, received, expected) {
 
 }
+
 BaseLogReporter.prototype.error = function (step, message) {
 
 }

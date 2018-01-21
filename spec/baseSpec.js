@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Basic Test Suite: text user/bot messages with user', function () {
   it('Should support `user` and `bot` attributes', function (done) {

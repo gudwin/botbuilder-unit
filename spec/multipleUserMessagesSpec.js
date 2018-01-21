@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Multiple User Message: test that multiple messages from users support', function () {
   it('Should support double `user` messages', function (done) {

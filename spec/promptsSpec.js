@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 const builder = require('botbuilder');
 const util = require('util');
@@ -20,7 +20,7 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
       title : title
     }).then( function () {
       done();
-    });;
+    });
   }
   it('Should support Prompt.text', function (done) {
     test('Should support Prompt.text', 'text', done, function (session) {

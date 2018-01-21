@@ -1,4 +1,4 @@
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const botbuilder = require('botbuilder');
 const unit = require('../');
 let bot = null;

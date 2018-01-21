@@ -1,5 +1,5 @@
 const builder = require('botbuilder');
-const botFactory = require('./botFactory');
+const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Timeout test suite', function () {
   let bot = null;

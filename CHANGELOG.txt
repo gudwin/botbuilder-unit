@@ -1,20 +1,32 @@
-- [NO] support for several parallel conversations
-- [NO] provide a pipeline for deployment
-- [NO] ability to mock recognizers
-- [NO] scan for *Script.js files in given folder and automatically run them
-- [NO] provide an example that shows Autoload functionality
-- [NO] mocking recognizers
-- [NO] validation of attachments;
-- [NO] validation of rich cards;
+- [NO][Major] validation of rich cards;
+- [NO][Major] subscripts injection;
+- [NO][Major] validation of attachments;
+- [NO][Major] support Direct Line
+- [NO][Major] support for several parallel conversations
+
+- [NO][Maintainability] extract log reporters to a separate library
+- [NO][Maintainability] provide a pipeline for deployment
  -- run tests
- --
  -- validate that samples still valid
  -- inject TOC
  -- message that code ready to be published
+- [NO][Discoverability] provide an example that shows Autoload functionality
+- [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
+- [NO][Discoverability] example for testing recognizer;
+- [NO][Discoverability] example with subscript
+
+- [NO] OneOfNextMessages(message, count ) validation step;
+- [NO] TillResponseMessage(message) validation step;
+- [NO] IgnoreTillMessage (messageText, maxCount = 0)
+- [NO] prepare automated tests for log reporters;
+- [NO] ability to mock recognizers;
 
 
-- [NO] HowTo - TDD for
-- [NO] Documentation updates
+
+--------------------------------
+v 0.6.0
+
+- [OK] custom verification step
 
 
 

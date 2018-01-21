@@ -3,7 +3,6 @@
 Table of Contents
 =================
 
-   * [Table of Contents](#table-of-contents)
    * [Glossary](#glossary)
    * [Introduction](#introduction)
       * [List of supported features:](#list-of-supported-features)
@@ -23,6 +22,7 @@ Table of Contents
          * [Session Management](#session-management)
          * [Validating ending of conversation](#validating-ending-of-conversation)
          * [Validating typing indicator](#validating-typing-indicator)
+         * [Custom Steps](#custom-steps)
          * [Set Current Dialog](#set-current-dialog)
    * [Mocking responses from the bot](#mocking-responses-from-the-bot)
       * [ConversationMock](#conversationmock)
@@ -57,7 +57,7 @@ As an input the Library requires a bot and a script.
 - active dialog and default params management;
 - timeouts for test;
 - mocking of responses from the bot;
-- "before" and "after" callbacks for each framework step;
+- custom validation steps in script  
 - configurable reporting;
 
 # Quick Start
@@ -279,6 +279,30 @@ Example:
 }
 ```
 
+### Custom Steps
+
+It is possible to inject a custom step into the script. Such step contains a user-defined  _filter_ function (in attribute _custom_)_ that  **MUST** return a Promise object. 
+Depending on a state of the Promise the Library 
+- while the Promise in _pending_ state the Library will wait 
+- _rejected_ state will stop execution of the script with error returned from
+- _fulfilled_ (resolved) state will continue the script execution
+
+Example:
+```javacript
+{
+    "custom": function () {
+        if ( someValidationFunc() ) {
+            return Promise.resolve();
+        } else {
+            return Promise.reject('Custom validation failed');
+        }
+    }
+}
+```
+
+
+
+
 ### Set Current Dialog 
 
 You could specify a dialog _id_ that will be set as active or default dialog for the bot. In case, if you call that function in the middle of conversation (when session conversation object already created) this message will [replace](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-replace)
@@ -317,6 +341,7 @@ You also could specify a _filter_ function. The Library will pass current instan
 - [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
 
 # Changelog
+- 0.6.0 - support for custom steps, refactoring of steps execution flow. **Warning!** __before__ and __after__ attributes are not supported anymore, use **custom** steps instead
 - 0.5.5 - documentation updates & fixes;
 - 0.5.4 - TOC added into documentation, basic test for proactive messages, basic code coverage report added;
 - 0.5.3 - fixes, examples;
