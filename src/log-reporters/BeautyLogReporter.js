@@ -116,6 +116,12 @@ BeautyLogReporter.prototype.messageReceived = function (step, message) {
       });
     }
   }
+  if ( message.attachmentLayout ) {
+    outputMessage += `\n-- attachmentLayout:${message.attachmentLayout}`
+  }
+  if ( message.attachments ) {
+    outputMessage += `\n-- attachments:\n${util.inspect(message.attachments)}`
+  }
   //let outputMessage = this.normalizeOutput(message);
   this.isLeftPaddingEnabled = false;
 

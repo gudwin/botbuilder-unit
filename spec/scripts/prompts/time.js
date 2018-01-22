@@ -23,7 +23,7 @@ module.exports = [
     "user": "today"
   },
   {
-    "bot": function (bot, message) {
+    "bot": function (message) {
       let date = new Date();
       date = new Date();
       let expected = `Your response is:${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;

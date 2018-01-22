@@ -23,7 +23,7 @@ UserMessage.prototype.send = function () {
     Promise.resolve()
       .then(() => {
         if ("function" === typeof this.config.user) {
-          return this.config.user(this.bot);
+          return this.config.user();
         } else {
           return Promise.resolve(this.config.user);
         }

@@ -6,12 +6,12 @@ module.exports = [
     "bot": 'Say hello?'
   },
   {
-    "user": function (bot) {
+    "user": function () {
       return Promise.resolve('Hello world!');
     }
   },
   {
-    "bot": function (bot, message) {
+    "bot": function ( message) {
       let fixture = 'You typed: Hello world!';
       if (message.text == fixture) {
         return Promise.resolve();

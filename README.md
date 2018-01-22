@@ -3,8 +3,10 @@
 Table of Contents
 =================
 
+   * [Table of Contents](#table-of-contents)
    * [Glossary](#glossary)
    * [Introduction](#introduction)
+      * [WARNING Migration to 0.6.* version](#warning-migration-to-06-version)
       * [List of supported features:](#list-of-supported-features)
    * [Quick Start](#quick-start)
       * [Install library](#install-library)
@@ -19,6 +21,7 @@ Table of Contents
          * [Script Messages](#script-messages)
          * [User Messages](#user-messages)
          * [Expected Responses](#expected-responses)
+         * [Richcards and Attachments validation](#richcards-and-attachments-validation)
          * [Session Management](#session-management)
          * [Validating ending of conversation](#validating-ending-of-conversation)
          * [Validating typing indicator](#validating-typing-indicator)
@@ -43,7 +46,14 @@ This is a test framework for chatbots leveraging Microsoft Bot Framework Chatbot
 As an input the Library requires a bot and a script.
  
 > The Library still in an active development, so don't hesitate to propose changes and new features.
- 
+
+## WARNING Migration to 0.6.* version 
+
+- __before__ and __after__ attributes are not supported anymore, use **custom** steps instead;
+- Bot instance removed from _filter_ functions arguments, as it is useless, as it never used;
+
+I apologize for the inconvenience.
+
 ##  List of supported features:
  
 - ability to emulate a conversation between the user and the bot; 
@@ -53,6 +63,7 @@ As an input the Library requires a bot and a script.
   - conversation [endings](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-manage-conversation-flow#end-conversation) and typing [indicators](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator);
   - validation of [suggested actions](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-suggested-actions);
   - **custom validators**;
+- attachment and richcard validation;
 - session state management;
 - active dialog and default params management;
 - timeouts for test;
@@ -123,29 +134,6 @@ At the end you will see next result:
 
 # Configuration
 
-## Global options
-
-Global options will be applied to every script that will be processed by library. There are two ways to setup a global option:
-- as an environment variable, Library will autoload it during startup;
-- as an attribute of _config_ object exposed in _module.exports_ section of The Library; 
- 
-### As an Environment Variable
-
-- **BOTBUILDERUNIT_TEST_TIMEOUT** - timeout for script execution in milliseconds
-- **BOTBUILDERUNIT_REPORTER** - logging style, supported values: _empty_, _plain_ and _beauty_
-
-For example, to run script with 10 seconds timeout and beautified output you need to execute something like: 
-`export BOTBUILDERUNIT_REPORTER=beauty; export BOTBUILDERUNIT_TEST_TIMEOUT=10000; npm test`
-
-### As a part of the Library module.exports
-
-The library exposes `config` object in module.exports. Properties of an object:
-- **timeout** - timeout for script execution in milliseconds
-- **reporter** - the instance of reporting class. Default value: _new PlainLogReporter()_. Classes provided by library:
-  - **PlainLogReporter**, default, will output text messages in console 
-  - **EmptyLogReporter**, nothing will be sent to output
-  - **PlainLogReporter**, colored and styled output, useful for long scripts 
-
 ## Script level
 
 The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
@@ -174,7 +162,7 @@ If the message is from the user, than message object should look like this:
 Or, specify a _filter_ function. The Library will pass an argument to the function - an instance of bot being tested. A function must return a Promise. An resolved value of Promise (supposed to be a string) will be passed to the bot:
 ```javascript
 {
-    "user": function (bot) {
+    "user": function () {
       return Promise.resolve('Hello world!');
     }
 }
@@ -205,7 +193,7 @@ or with a _filter_ function. The Library will pass two arguments into the functi
 Next example presents usage of filter function, that validates if chatbot returned a Number in range of 0 to 100:
 ```javascript
  {
-     "bot" : function ( bot, receivedMessage)  {
+     "bot" : function ( receivedMessage)  {
         let value = parseInt(receivedMessage.text);
         if (( value >= 0 ) && (value <=100)) {
             return Promise.resolve('success');
@@ -231,7 +219,7 @@ If you want to validate suggested actions of the message:
 You could use _filter_ function to validate suggested actions:
 ```javascript
 {
-    "bot" : function ( bot, receivedMessage ) {
+    "bot" : function ( receivedMessage ) {
         if ( receviedMessage.suggestedActions.length == 2 ) {
             return Promise.resolve('success');
         } else {
@@ -239,6 +227,83 @@ You could use _filter_ function to validate suggested actions:
         }
     }
 }
+```
+### Richcards and Attachments validation
+
+It is possible to validate attachments and richcards returned by a bot. To validate attachment body you need to specify a step with _attachments_ attribute, to validate an attachment layout you need to specify _attachmentLayout_ attribute. 
+
+It is possible to combine these parameters together.
+```javascript
+  {
+    "attachmentLayout": "carousel",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "title": "My Title",
+          "subtitle": "My Subtitle",
+          "images": [
+            {
+              "url": "Some Url"
+            },
+            {
+              "url": "Another Url"
+            }
+          ]
+        }
+      }
+    ]
+  },
+```
+
+Or with _bot_ attribute: 
+```javascript
+  {
+    "bot" : "Hello World!",
+    "attachmentLayout": "carousel",
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "title": "My Title",
+          "subtitle": "My Subtitle",
+          "images": [
+            {
+              "url": "Some Url"
+            },
+            {
+              "url": "Another Url"
+            }
+          ]
+        }
+      }
+    ]
+  },
+```
+Inside attachments body you could freely use _filter_ functions. The function will receive a part of attachments object body for validation:
+```javascript
+  {
+    "bot" : "World!",
+    "attachmentLayout": function ( value ) {
+      return "carousel" == value ? Promise.resolve() : Promise.reject();
+    },
+    "attachments": [
+      {
+        "contentType": "application/vnd.microsoft.card.hero",
+        "content": {
+          "title": function ( value ) {
+            return "My Title" == value ? Promise.resolve() : Promise.reject('Wrong title');
+          },
+          "subtitle": function (value ) {
+            return "My Subtitle" == value ? Promise.resolve() : Promise.reject('Wrong subtitle');
+          },
+          "images": function ( value ) {
+            return 2 == value.length ? Promise.resolve() : Promise.reject('Wrong images count');
+          }
+        }
+      }
+    ]
+  }
 ```
 
 ### Session Management 
@@ -278,7 +343,7 @@ Example:
     "typing": true
 }
 ```
-
+ 
 ### Custom Steps
 
 It is possible to inject a custom step into the script. Such step contains a user-defined  _filter_ function (in attribute _custom_)_ that  **MUST** return a Promise object. 
@@ -314,6 +379,29 @@ It is also possible to specify an arguments to the function:
 
 You also could specify a _filter_ function. The Library will pass current instance of bot as argument into the function:  
  
+## Global options
+
+Global options will be applied to every script that will be processed by library. There are two ways to setup a global option:
+- as an environment variable, Library will autoload it during startup;
+- as an attribute of _config_ object exposed in _module.exports_ section of The Library; 
+ 
+### As an Environment Variable
+
+- **BOTBUILDERUNIT_TEST_TIMEOUT** - timeout for script execution in milliseconds
+- **BOTBUILDERUNIT_REPORTER** - logging style, supported values: _empty_, _plain_ and _beauty_
+
+For example, to run script with 10 seconds timeout and beautified output you need to execute something like: 
+`export BOTBUILDERUNIT_REPORTER=beauty; export BOTBUILDERUNIT_TEST_TIMEOUT=10000; npm test`
+
+### As a part of the Library module.exports
+
+The library exposes `config` object in module.exports. Properties of an object:
+- **timeout** - timeout for script execution in milliseconds
+- **reporter** - the instance of reporting class. Default value: _new PlainLogReporter()_. Classes provided by library:
+  - **PlainLogReporter**, default, will output text messages in console 
+  - **EmptyLogReporter**, nothing will be sent to output
+  - **PlainLogReporter**, colored and styled output, useful for long scripts 
+
 # Mocking responses from the bot 
  
  Library provides an **ConversationMock** class with purpose to mock responses from the chatbot. Possible use cases for such feature are:
@@ -339,8 +427,10 @@ You also could specify a _filter_ function. The Library will pass current instan
 - [Base Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/01-timmy/timmy.js?raw=true)
 - [Session Management Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/02-session/session.js?raw=true)
 - [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
+- [Richcard Validation Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/04-richcard/richcard.js?raw=true)
 
 # Changelog
+- 0.6.1 - Rich card and attachments validation. **Warning!** Bot instance removed from _filter_ functions arguments, as it is useless, as it never used;
 - 0.6.0 - support for custom steps, refactoring of steps execution flow. **Warning!** __before__ and __after__ attributes are not supported anymore, use **custom** steps instead
 - 0.5.5 - documentation updates & fixes;
 - 0.5.4 - TOC added into documentation, basic test for proactive messages, basic code coverage report added;

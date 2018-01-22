@@ -10,7 +10,8 @@ function MessageFactory() {
 
 }
 MessageFactory.produce = function (step, config, bot, logReporter, prevStepPromise) {
-  let isBot = ("undefined" != typeof config.bot) || config.endConversation || config.typing;
+  let isBot = config.bot || config.endConversation || config.typing
+    || config.attachmentLayout || config.attachments;
   if (isBot) {
     return new BotMessage(step, config, bot, logReporter, prevStepPromise);
   }

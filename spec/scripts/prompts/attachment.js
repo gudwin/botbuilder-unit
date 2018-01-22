@@ -7,7 +7,7 @@ module.exports = [
     "bot": "Please upload an attachment"
   },
   {
-    "user": function (bot ) {
+    "user": function ( ) {
       let msg = new builder.Message();
       msg.addAttachment({
         "name": "test",

@@ -21,7 +21,7 @@ describe('Errors Test', function () {
     }).then(function () {
 
     }, function (err ) {
-      expect(err).toBe('Step #1, <Hello world!> does not match <hi!>');
+      expect(err).toBe('Received text <Hello world!> does not match <hi!>');
       done();
     });
   });

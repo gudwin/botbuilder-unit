@@ -33,7 +33,7 @@ BaseLogReporter.prototype.messageSent = function (step, message) {
 BaseLogReporter.prototype.customStep = function (step, message) {
 
 }
-BaseLogReporter.prototype.expectationError = function (step, received, expected) {
+BaseLogReporter.prototype.expectationError = function (step, received, e) {
 
 }
 

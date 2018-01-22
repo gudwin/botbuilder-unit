@@ -1,6 +1,6 @@
-- [NO][Major] validation of rich cards;
+
+- [NO][Major] validation of prompt actions (choices, buttons);
 - [NO][Major] subscripts injection;
-- [NO][Major] validation of attachments;
 - [NO][Major] support Direct Line
 - [NO][Major] support for several parallel conversations
 
@@ -22,6 +22,13 @@
 - [NO] ability to mock recognizers;
 
 
+
+--------------------------------
+v 0.6.1
+
+- [OK] validation of rich cards and attachments;
+- [OK][Major] validation of rich cards;
+- [OK][Major] validation of attachments;
 
 --------------------------------
 v 0.6.0

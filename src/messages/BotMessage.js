@@ -1,5 +1,5 @@
 const BaseScriptStep = require('./BaseScriptStep');
-
+const inspect = require('util').inspect;
 function BotMessage(step, config, bot, logReporter, prevStepPromise) {
 
   BaseScriptStep.call(this, step, config, bot, logReporter, prevStepPromise);
@@ -17,101 +17,193 @@ function BotMessage(step, config, bot, logReporter, prevStepPromise) {
 BotMessage.prototype = Object.create(BaseScriptStep.prototype);
 BotMessage.prototype.constructor = BotMessage;
 
-
-BotMessage.prototype.getDefaultBotMessageValidator = function () {
-  return () => {
-    return new Promise((resolve, reject)=> {
-      if (this.config.bot) {
-        try {
-          this.validateBotMessage(this.receivedMessage);
-          this.validateSuggestedActions(this.receivedMessage);
-        } catch (e) {
-          this.logReporter.expectationError(this.step, this.receivedMessage, this.config);
-          reject(e);
-        }
-      }
-      else {
-        let msg = `No input message in step configuration:\n${JSON.stringify(this.config)}`
-        this.logReporter.error(this.step, msg);
-        reject(msg);
-      }
-      resolve(true);
-
-    })
-
-  }
+BotMessage.prototype.isStepHasValidator = function () {
+  return ("undefined" != typeof this.config.bot)
+    || ("undefined" != typeof this.config.suggestedActions)
+    || ("undefined" != typeof this.config.attachments)
+    || ("undefined" != typeof this.config.endConversation)
+    || ("undefined" != typeof this.config.typing)
 }
+
+
 BotMessage.prototype.validate = function () {
 
   return new Promise((resolve, reject) => {
-    Promise.resolve(true)
-      .then(() => {
-        if (null == this.receivedMessage) {
-          let msg = 'Can\'t continue validation. There are no received message';
-          this.logReporter.error(this.step, msg);
-          reject(msg);
-        }
-        if ("undefined" != typeof this.config.bot) {
-          let filter = null;
-          if (typeof this.config.bot === 'function') {
-            filter = this.config.bot
-          }
-          else {
-            filter = this.getDefaultBotMessageValidator();
-          }
-          return filter(this.bot, this.receivedMessage);
-        } else if (this.config.endConversation) {
-          this.logReporter.endConversation(this.step, this.receivedMessage);
-          return true;
-        } else if (this.config.typing) {
-          this.logReporter.typing(this.step);
-          return true;
-        } else {
-          let msg = `Unable to find matching validator. Step config:\n${JSON.stringify(this.config)}`;
-          this.logReporter.error(this.step, msg);
-          reject(msg);
-        }
-      })
+    if (null == this.receivedMessage) {
+      let msg = 'Can\'t continue validation. There are no received message';
+      reject(msg);
+      return;
+    }
+    if (!this.isStepHasValidator()) {
+      let msg = `Unable to find matching validator. Step config:\n${inspect(this.config)}`;
+      reject();
+      return;
+    }
 
+    this.validateSuggestedActions()
       .then(() => {
-        resolve();
+        return this.validateAttachments();
       })
-      .catch((err) => {
-        reject(err);
+      .then(() => {
+        return this.validateAttachmentLayout();
       })
-  });
+      .then(() => {
+        return this.validateBotMessage();
+      })
+      .then(() => {
+        return this.validateEndConversation();
+      })
+      .then(() => {
+        return this.validateTyping();
+      })
+      .then(resolve)
+      .catch((error) => {
+        this.logReporter.info(this.step, this.config);
+        this.logReporter.expectationError(this.step, this.receivedMessage, error);
+        reject(error);
+      })
+  })
 }
 
 BotMessage.prototype.validateBotMessage = function () {
-  let isRegExp = this.config.bot.test ? true : false;
-  let result = false;
-  if (isRegExp) {
-    result = this.config.bot.test(this.receivedMessage.text);
+  if (!this.config.bot) {
+    return Promise.resolve();
+  }
+  if ("function" == typeof this.config.bot) {
+    let promise = this.config.bot.call(null, this.receivedMessage);
+    if (!(promise instanceof Promise )) {
+      let error = `Message validation by callback failed. Callback MUST return a promise `;
+      return Promise.reject(error);
+    }
+    return promise.catch(() => {
+      let error = `Message validation by callback failed`;
+      return Promise.reject(error);
+    })
   } else {
-    result = this.receivedMessage.text === this.config.bot;
+    let isRegExp = this.config.bot.test ? true : false;
+    let result = isRegExp ? this.config.bot.test(this.receivedMessage.text) : this.receivedMessage.text === this.config.bot;
+    if (!result) {
+      let error = `Received text <${this.receivedMessage.text}> does not match <${this.config.bot}>`;
+      return Promise.reject(error);
+    }
+    return Promise.resolve();
   }
-  if (!result) {
-    let error = `Step #${this.step}, <${this.receivedMessage.text}> does not match <${this.config.bot}>`;
-    throw (error);
+
+
+}
+BotMessage.prototype.validateTyping = function () {
+  if (!this.config.typing) {
+    return Promise.resolve();
   }
-  return result;
+  if ("typing" == this.receivedMessage.type) {
+    this.logReporter.typing(this.step);
+    return Promise.resolve();
+  } else {
+    let msg = 'Typing indicator expected'
+    return Promise.reject(msg);
+  }
+}
+BotMessage.prototype.validateEndConversation = function () {
+  if (!this.config.endConversation) {
+    return Promise.resolve();
+  }
+  if ("endOfConversation" == this.receivedMessage.type) {
+    this.logReporter.endConversation(this.step);
+    return Promise.resolve();
+  } else {
+    let msg = 'endConversation indicator expected'
+    return Promise.reject(msg);
+  }
+}
+BotMessage.prototype.validateAttachmentLayout = function () {
+  if (!this.config.attachmentLayout) {
+    return Promise.resolve();
+  }
+  if ("function" == typeof this.config.attachmentLayout) {
+    let promise = this.config.attachmentLayout.call(null, this.receivedMessage.attachmentLayout);
+    if ( !(promise instanceof Promise )) {
+      let msg = `Attachment layout validation by callback failed. Callback MUST return a promise`;
+      return Promise.reject((msg));
+    }
+    return promise.catch(() => {
+      let msg = `Attachment layout validation by callback failed.`;
+      return Promise.reject((msg));
+    })
+  } else if (this.config.attachmentLayout == this.receivedMessage.attachmentLayout) {
+    return Promise.resolve();
+  } else {
+    let msg = `Attachment layout validation failed:<${this.receivedMessage.attachmentLayout}> does not match <${this.config.attachmentLayout}>`;
+    return Promise.reject(msg);
+  }
 }
 
+BotMessage.prototype.validateAttachments = function () {
+  if (!this.config.attachments) {
+    return Promise.resolve();
+  }
+
+  let iterateAndValidate = function (validatorConfig, receivedValue, path) {
+    if ("function" == typeof validatorConfig) {
+      let promise = validatorConfig.call(null, receivedValue);
+      if (!(promise instanceof Promise )) {
+        throw ('Attachment validation by callback failed. Callback MUST return a Promise');
+      }
+
+      return promise.catch((error) => {
+        let msg = `Attachment validation by callback failed. Path: ${path}`;
+        if (error) {
+          msg += ' Error:' + inspect(error)
+        }
+        throw (msg);
+      })
+    } else if (Array.isArray(validatorConfig)) {
+      if (!Array.isArray(receivedValue)) {
+        let msg = `Attachment validation failed, array must exist at path: ${path}`;
+        throw msg;
+      }
+      validatorConfig.forEach((item, i) => {
+        iterateAndValidate(item, receivedValue[i], path + `[${i}]`)
+      });
+    } else if ("object" == typeof validatorConfig) {
+      if ("object" != typeof receivedValue) {
+        let msg = `Attachment validation failed, object must exist at path: ${path}`;
+        throw msg;
+      }
+      for (let key in validatorConfig) {
+        if (!validatorConfig.hasOwnProperty(key)) {
+          continue;
+        }
+        iterateAndValidate(validatorConfig[key], receivedValue[key], path + `[${key}]`);
+      }
+    } else if (validatorConfig != receivedValue) {
+      let msg = `Attachment validation failed at path: ${path}`;
+      throw msg;
+    }
+
+  }
+  try {
+    iterateAndValidate(this.config.attachments, this.receivedMessage.attachments, 'attachments');
+  } catch (e) {
+    return Promise.reject(e);
+  }
+  return Promise.resolve();
+}
 BotMessage.prototype.validateSuggestedActions = function () {
-  let isSuggestedActionsNeeded = this.config.suggestedActions && this.config.suggestedActions.length;
-  if (!isSuggestedActionsNeeded) {
-    return;
+
+  if (!this.config.suggestedActions) {
+    return Promise.resolve();
   }
   let isSuggestedActionsPresent = this.receivedMessage.suggestedActions
     && this.receivedMessage.suggestedActions.actions
     && this.receivedMessage.suggestedActions.actions.length;
   if (!isSuggestedActionsPresent) {
     let msg = `Step #${this.step}, Message misses Suggested Actions`;
-    throw (msg);
+    return Promise.reject(msg);
   }
   let isRangeError = this.config.suggestedActions.length != this.receivedMessage.suggestedActions.actions.length;
   if (isRangeError) {
-    throw (`Step #${this.step}, amount of received suggested actions (${this.receivedMessage.suggestedActions.actions.length}) differs from expected  (${this.config.suggestedActions.length})`);
+    let msg = (`Step #${this.step}, amount of received suggested actions (${this.receivedMessage.suggestedActions.actions.length}) differs from expected  (${this.config.suggestedActions.length})`);
+    return Promise.reject(msg);
   }
 
   for (let i = 0; i < this.config.suggestedActions.length; i++) {
@@ -128,10 +220,11 @@ BotMessage.prototype.validateSuggestedActions = function () {
         + (!isSameTitle ? "\n- Title differs" : '')
         + (!isSameType ? "\n- Wrong type of the card" : '')
         + (!isSameValue ? "\n - Messages are different" : '');
+      return Promise.reject(msg);
 
-      throw (msg);
     }
   }
+  return Promise.resolve();
 }
 BotMessage.prototype.receiveBotReply = function (receivedMessage) {
   if (this.receivedMessage) {
