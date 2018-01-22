@@ -32,7 +32,7 @@ bot.dialog('/my-test', [
 
 // Executing test
 unit(bot, script, {
-  title: 'Sample With Session Sanagement',
+  title: 'Sample With Startup Dialog Management',
   reporter : new unit.BeautyLogReporter() // Display log in messenger-like style, with colors
 }).then(() => {
   // If test finished successfully
