@@ -58,7 +58,7 @@ BotMessage.prototype.validate = function () {
       })
       .then(resolve)
       .catch((error) => {
-        this.logReporter.info(this.step, this.config);
+        this.logReporter.info(`Expected message at step ${this.step}`, this.config);
         this.logReporter.expectationError(this.step, this.receivedMessage, error);
         reject(error);
       })
@@ -99,7 +99,7 @@ BotMessage.prototype.validateTyping = function () {
     this.logReporter.typing(this.step);
     return Promise.resolve();
   } else {
-    let msg = 'Typing indicator expected'
+    let msg = 'Typing indicator expected';
     return Promise.reject(msg);
   }
 }

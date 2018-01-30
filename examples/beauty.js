@@ -39,9 +39,9 @@ logger.messageReceived(9, script[9]);
 logger.endConversation(10);
 logger.scriptFinished(12);
 logger.expectationError(11, {bot: 'I want to add...'}, script[11]);
-logger.warning(12, 'Some important information to notice!');
-logger.error(12, {customError: 'Oh, well! I just happenned...'});
-logger.info(13, {a:1,b:2,text: 'Oh, well! I just happenned...'})
+logger.warning('WARNING ON STEP 12', 'Some important information to notice!');
+logger.error('ERROR ON STEP 12', {customError: 'Oh, well! I just happenned...'});
+logger.info('INFO AT STEP 14', {a:1,b:2,text: 'Oh, well! I just happenned...'})
 logger.startupDialog(14, '/startup/',{a:1,b:2,text: 'Oh, well! I just happenned...'});
 logger.session(15, {
   conversationData : {

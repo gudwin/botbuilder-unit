@@ -49,7 +49,7 @@ UserMessage.prototype.send = function () {
         resolve();
       })
       .catch((err)=> {
-        this.logReporter.error(this.step, err);
+        this.logReporter.error(`Error at step ${this.step}`, err);
         reject(err);
       });
   })

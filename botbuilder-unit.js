@@ -56,7 +56,7 @@ function testBot(bot, messages, options) {
 
     function fail(err) {
       if (!finished) {
-        getLogReporter().error(step, err);
+        getLogReporter().error("Script failed with error:", err);
       }
       finished = true;
       reject(err);
@@ -128,7 +128,7 @@ function testBot(bot, messages, options) {
 
         if (!found) {
           getLogReporter().messageReceived(extraMessageIndex,message)
-          getLogReporter().warning(extraMessageIndex, 'Ignoring message (Out of Range)');
+          getLogReporter().warning(`Warning at EXTRA STEP ${extraMessageIndex}`, 'Ignoring message (Out of Range)');
           extraMessageIndex++;
           // As more messages could appear, I suppose that is better to track them
           setTimeout(done, FINISH_TIMEOUT);

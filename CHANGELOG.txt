@@ -10,16 +10,26 @@
  -- validate that samples still valid
  -- inject TOC
  -- message that code ready to be published
+
 - [NO][Discoverability] provide an example that shows Autoload functionality
 - [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
 - [NO][Discoverability] example for testing recognizer;
 - [NO][Discoverability] example with subscript
+
+- [NO][Maintainability] Disable ConsoleConnector default output
 
 - [NO] OneOfNextMessages(message, count ) validation step;
 - [NO] TillResponseMessage(message) validation step;
 - [NO] IgnoreTillMessage (messageText, maxCount = 0)
 - [NO] prepare automated tests for log reporters;
 - [NO] ability to mock recognizers;
+
+
+--------------------------------
+v 0.6.2
+
+- Removed attachment-related information from Prompt messages
+- Custom headers for info messages
 
 
 

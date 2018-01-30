@@ -37,13 +37,13 @@ BaseLogReporter.prototype.expectationError = function (step, received, e) {
 
 }
 
-BaseLogReporter.prototype.error = function (step, message) {
+BaseLogReporter.prototype.error = function (errorHeader, message) {
 
 }
-BaseLogReporter.prototype.warning = function (step, message) {
+BaseLogReporter.prototype.warning = function (warningHeader, message) {
 
 }
-BaseLogReporter.prototype.info = function (step, message) {
+BaseLogReporter.prototype.info = function (infoHeader, message) {
 
 }
 BaseLogReporter.prototype.session = function (step, session) {

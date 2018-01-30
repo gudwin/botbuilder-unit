@@ -49,15 +49,23 @@ PlainLogReporter.prototype.expectationError = function (step, received, expected
   let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normizalizeForOutput(( expected ));
   console.error(`#${step} Expectation Error: ${this.normizalizeForOutput(expectedErrorMsg)}`);
 }
-PlainLogReporter.prototype.error = function (step, message) {
-  console.error(`#${step} Error: ${this.normizalizeForOutput(message)}`);
+PlainLogReporter.prototype.error = function (errorHeader, message) {
+  if ( "undefined" == typeof errorHeader ) {
+    errorHeader = 'Error:';
+  }
+  console.error(`# ${errorHeader} ${this.normizalizeForOutput(message)}`);
 }
-PlainLogReporter.prototype.warning = function (step, message) {
-  console.log(`#${step} Warning: ${this.normizalizeForOutput(message)}`);
+PlainLogReporter.prototype.warning = function (warningHeader, message) {
+  if ( "undefined" == typeof warningHeader ) {
+    warningHeader = 'WARNING:';
+  }
+  console.log(`# ${warningHeader} ${this.normizalizeForOutput(message)}`);
 }
-PlainLogReporter.prototype.info = function (step, message) {
-
-  console.log(`#${step} Info: ${this.normizalizeForOutput(message)}`);
+PlainLogReporter.prototype.info = function (infoHeader, message) {
+  if ( !infoHeader ) {
+    infoHeader = 'Info:';
+  }
+  console.log(`# ${infoHeader} ${this.normizalizeForOutput(message)}`);
 }
 PlainLogReporter.prototype.session = function (step, session) {
   let output = {

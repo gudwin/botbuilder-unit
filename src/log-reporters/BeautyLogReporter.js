@@ -164,22 +164,31 @@ BeautyLogReporter.prototype.expectationError = function (step, received, expecte
   let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normalizeOutput(( expected ));
   this.outputMessageBox(step, expectedErrorMsg, 'Expected Message:', colors.red);
 }
-BeautyLogReporter.prototype.error = function (step, message) {
+BeautyLogReporter.prototype.error = function (errorHeader, message) {
   if (false === this.finalReport.firstErrorOnStep) {
     this.finalReport.firstErrorOnStep = step;
     this.finalReport.error = message;
   }
-  this.outputCentralized(`ERROR ON STEP #${step}`, colors.red);
+  if ( "undefined" == typeof errorHeader ) {
+    errorHeader = 'ERROR';
+  }
+  this.outputCentralized(errorHeader, colors.red);
   console.log(colors.red(this.normalizeOutput(message)));
   this.isLeftPaddingEnabled = false;
 }
-BeautyLogReporter.prototype.warning = function (step, message) {
+BeautyLogReporter.prototype.warning = function (warningHeader, message) {
   this.finalReport.warnings = true;
-  this.outputCentralized(`WARNING ON STEP #${step}`, colors.yellow);
+  if ( "undefined" == typeof warningHeader ) {
+    warningHeader = 'WARNING';
+  }
+  this.outputCentralized(warningHeader, colors.yellow);
   console.log(colors.yellow(message));
 }
-BeautyLogReporter.prototype.info = function (step, message) {
-  this.outputCentralized(`INFO ON STEP #${step}`, colors.yellow);
+BeautyLogReporter.prototype.info = function (infoHeader, message ) {
+  if ( "undefined" == typeof infoHeader ) {
+    infoHeader = 'INFO';
+  }
+  this.outputCentralized(infoHeader, colors.yellow);
   console.log(colors.yellow(this.normalizeOutput(message)));
 }
 

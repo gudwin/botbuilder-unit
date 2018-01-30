@@ -34,13 +34,13 @@ EmptyLogReporter.prototype.customStep = function (step, message) {
 EmptyLogReporter.prototype.expectationError = function (step, received, expected) {
 
 }
-EmptyLogReporter.prototype.error = function (step, message) {
+EmptyLogReporter.prototype.error = function (errorHeader, message) {
 
 }
-EmptyLogReporter.prototype.warning = function (step, message) {
+EmptyLogReporter.prototype.warning = function (warningHeader, message) {
 
 }
-EmptyLogReporter.prototype.info = function (step, message) {
+EmptyLogReporter.prototype.info = function (infoHeader, message) {
 
 }
 EmptyLogReporter.prototype.session = function (step, message) {
