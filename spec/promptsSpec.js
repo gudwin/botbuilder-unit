@@ -51,7 +51,7 @@ describe('Prompts Test Suite: make sure that default Prompts supported', functio
 
   it('Should support Prompt.choices', function (done) {
     test('Should support Prompt.choices','choices', done, function (session) {
-      builder.Prompts.choice(session, 'Please select any choice', 'red|green|blue')
+      builder.Prompts.choice(session, 'Please select any choice', 'red|green|blue',{listStyle:builder.ListStyle.buttons})
     }, (session, results) => {
       session.endDialog(`Your response is:${results.response.entity}`);
     });

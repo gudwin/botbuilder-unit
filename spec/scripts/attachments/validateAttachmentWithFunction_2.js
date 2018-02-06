@@ -8,7 +8,7 @@ module.exports = [
       {
         "contentType": "application/vnd.microsoft.card.hero",
         "content": function (value) {
-          result = ((value.title == 'My Title')
+          let result = ((value.title == 'My Title')
           && (value.subtitle == 'My Subtitle')
           && (value.images.length == 2));
           return result ? Promise.resolve() : Promise.reject();
