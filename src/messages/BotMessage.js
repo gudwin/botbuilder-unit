@@ -75,8 +75,7 @@ BotMessage.prototype.validateBotMessage = function () {
       let error = `Message validation by callback failed. Callback MUST return a promise `;
       return Promise.reject(error);
     }
-    return promise.catch(() => {
-      let error = `Message validation by callback failed`;
+    return promise.catch((error) => {
       return Promise.reject(error);
     })
   } else {
@@ -144,7 +143,7 @@ BotMessage.prototype.validateAttachments = function () {
 
   let iterateAndValidate = function (validatorConfig, receivedValue, path) {
     if ("function" == typeof validatorConfig) {
-      let promise = validatorConfig.call(null, receivedValue);
+      let promise = validatorConfig.call(null, receivedValue, path);
       if (!(promise instanceof Promise )) {
         throw ('Attachment validation by callback failed. Callback MUST return a Promise');
       }

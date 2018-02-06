@@ -430,6 +430,7 @@ The library exposes `config` object in module.exports. Properties of an object:
 - [Richcard Validation Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/04-richcard/richcard.js?raw=true)
 
 # Changelog
+- 0.6.3 - Fix for attachment validation by callback. Better error messages. Smoke tests for log reporters;
 - 0.6.2 - Better error messages;
 - 0.6.1 - Rich card and attachments validation. **Warning!** Bot instance removed from _filter_ functions arguments, as it is useless, as it never used;
 - 0.6.0 - support for custom steps, refactoring of steps execution flow. **Warning!** __before__ and __after__ attributes are not supported anymore, use **custom** steps instead
