@@ -51,6 +51,7 @@ function testBot(bot, messages, options) {
 
     function done() {
       finished = true;
+      getLogReporter().scriptFinished();
       resolve();
     }
 

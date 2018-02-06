@@ -1,10 +1,12 @@
 
-- [NO][Major] validation of prompt actions (choices, buttons);
 - [NO][Major] subscripts injection;
 - [NO][Major] support Direct Line
 - [NO][Major] support for several parallel conversations
+- [NO][Major] ability to mock recognizers;
+- support for internationalization
 
 - [NO][Maintainability] extract log reporters to a separate library
+- [NO][Maintainability] reorganize tests about Messages (like BotMessages)
 - [NO][Maintainability] provide a pipeline for deployment
  -- run tests
  -- validate that samples still valid
@@ -22,7 +24,15 @@
 - [NO] TillResponseMessage(message) validation step;
 - [NO] IgnoreTillMessage (messageText, maxCount = 0)
 - [NO] prepare automated tests for log reporters;
-- [NO] ability to mock recognizers;
+
+
+
+--------------------------------
+v 0.6.3
+
+- Fix for attachment validation by callback.
+- Better error messages.
+- Smoke tests for log reporters;
 
 
 --------------------------------
