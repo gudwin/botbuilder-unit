@@ -10,8 +10,8 @@ function PlainLogReporter() {
 PlainLogReporter.prototype = Object.create(BaseLogReporter.prototype);
 PlainLogReporter.prototype.constructor = PlainLogReporter;
 
-PlainLogReporter.prototype.scriptFinished = function (step) {
-  console.log(`#${step} Script finished`);
+PlainLogReporter.prototype.scriptFinished = function () {
+  console.log(`# Script finished`);
 }
 PlainLogReporter.prototype.normizalizeForOutput = function (message) {
   return util.inspect(message, {depth: 4, color: false, showHidden: true})
@@ -45,8 +45,8 @@ PlainLogReporter.prototype.customStep = function (step, message) {
   }
   console.log(`#${step} Custom Validation Step: ${outputMessage}`);
 }
-PlainLogReporter.prototype.expectationError = function (step, received, expected) {
-  let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normizalizeForOutput(( expected ));
+PlainLogReporter.prototype.expectationError = function (step, received, error) {
+  let expectedErrorMsg =  this.normizalizeForOutput( error );
   console.error(`#${step} Expectation Error: ${this.normizalizeForOutput(expectedErrorMsg)}`);
 }
 PlainLogReporter.prototype.error = function (errorHeader, message) {

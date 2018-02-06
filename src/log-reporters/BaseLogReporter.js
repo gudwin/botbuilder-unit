@@ -15,7 +15,7 @@ BaseLogReporter.prototype.newScript = function (messages, scriptName) {
   });
   console.log(intro);
 }
-BaseLogReporter.prototype.scriptFinished = function (step) {
+BaseLogReporter.prototype.scriptFinished = function () {
 
 }
 BaseLogReporter.prototype.messageReceived = function (step, message) {
@@ -33,7 +33,7 @@ BaseLogReporter.prototype.messageSent = function (step, message) {
 BaseLogReporter.prototype.customStep = function (step, message) {
 
 }
-BaseLogReporter.prototype.expectationError = function (step, received, e) {
+BaseLogReporter.prototype.expectationError = function (step, received, error) {
 
 }
 

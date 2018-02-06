@@ -25,7 +25,7 @@ BeautyLogReporter.prototype.refreshDimensions = function (msg) {
   this.contentColumnsPerRow = Math.floor(2 / 3 * this.columnsPerRow);
 }
 BeautyLogReporter.prototype.normalizeOutput = function (message) {
-  return util.inspect(message, {depth: 4, color: true, showHidden: true})
+  return util.inspect(message, {depth: 6, color: true, showHidden: true})
 }
 BeautyLogReporter.prototype.outputCentralized = function (msg, colorFunc) {
   if (!colorFunc) {
@@ -92,22 +92,22 @@ BeautyLogReporter.prototype.newScript = function (messages, scriptName) {
   this.finalReport.totalSteps = messages.length;
   BaseLogReporter.prototype.newScript.call(this, messages);
 }
-BeautyLogReporter.prototype.scriptFinished = function (step) {
+BeautyLogReporter.prototype.scriptFinished = function () {
   this.isLeftPaddingEnabled = false;
   if (false !== this.finalReport.firstErrorOnStep) {
     this.outputCentralized(' SCRIPT FINISHED WITH ERRORS ', colors.red);
     this.log(`Completed / Total steps: ${this.finalReport.firstErrorOnStep}/${this.finalReport.totalSteps}`, colors.red)
   } else if (this.finalReport.warnings) {
     this.outputCentralized(' SCRIPT FINISHED WITH WARNINGS', colors.yellow);
-    this.log(`Completed / Total steps: ${step+1}/${this.finalReport.totalSteps}`, colors.yellow);
+    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.yellow);
   } else {
     this.outputCentralized(' SCRIPT FINISHED SUCCESSFULLY', colors.green);
-    this.log(`Completed / Total steps: ${step+1}/${this.finalReport.totalSteps}`, colors.green);
+    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.green);
   }
 
 }
 BeautyLogReporter.prototype.messageReceived = function (step, message) {
-  let outputMessage = message.text ? message.text : this.normalizeOutput(message);
+  let outputMessage = this.normalizeOutput(message);
   if ( message.suggestedActions ) {
     if ( message.suggestedActions.actions ) {
       outputMessage += `\n\n--\nSuggested actions:`;
@@ -155,18 +155,17 @@ BeautyLogReporter.prototype.customStep = function (step, message) {
   this.outputMessageBox(step, outputMessage, 'Custom Validation Step:', colors.yellow);
 
 }
-BeautyLogReporter.prototype.expectationError = function (step, received, expected) {
+BeautyLogReporter.prototype.expectationError = function (step, received, error ) {
   if (false === this.finalReport.firstErrorOnStep) {
     this.finalReport.firstErrorOnStep = step;
-    this.finalReport.error = expected;
+    this.finalReport.error = error;
   }
   this.outputCentralized(`EXPECTATION ERROR ON STEP #${step}`, colors.red)
-  let expectedErrorMsg = expected.bot ? expected.bot.toString() : this.normalizeOutput(( expected ));
-  this.outputMessageBox(step, expectedErrorMsg, 'Expected Message:', colors.red);
+  this.error('Error:', error);
+
 }
 BeautyLogReporter.prototype.error = function (errorHeader, message) {
-  if (false === this.finalReport.firstErrorOnStep) {
-    this.finalReport.firstErrorOnStep = step;
+  if (!this.finalReport.error) {
     this.finalReport.error = message;
   }
   if ( "undefined" == typeof errorHeader ) {

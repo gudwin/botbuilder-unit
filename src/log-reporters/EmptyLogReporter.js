@@ -13,7 +13,7 @@ EmptyLogReporter.prototype.constructor = EmptyLogReporter;
 EmptyLogReporter.prototype.newScript = function (intro) {
 
 }
-EmptyLogReporter.prototype.scriptFinished = function (step) {
+EmptyLogReporter.prototype.scriptFinished = function () {
 
 }
 EmptyLogReporter.prototype.messageReceived = function (step, message) {
@@ -31,7 +31,7 @@ EmptyLogReporter.prototype.messageSent = function (step, message) {
 EmptyLogReporter.prototype.customStep = function (step, message) {
 
 }
-EmptyLogReporter.prototype.expectationError = function (step, received, expected) {
+EmptyLogReporter.prototype.expectationError = function (step, received, error) {
 
 }
 EmptyLogReporter.prototype.error = function (errorHeader, message) {
