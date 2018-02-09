@@ -14,7 +14,8 @@ PlainLogReporter.prototype.scriptFinished = function () {
   console.log(`# Script finished`);
 }
 PlainLogReporter.prototype.normizalizeForOutput = function (message) {
-  return util.inspect(message, {depth: 4, color: false, showHidden: true})
+  let isObject = (message instanceof Object) || ("function" ==  typeof message);;
+  return isObject? util.inspect(message, {depth: 4, color: false, showHidden: true}) : message.toString()
 }
 
 PlainLogReporter.prototype.messageReceived = function (step, message) {
@@ -46,8 +47,7 @@ PlainLogReporter.prototype.customStep = function (step, message) {
   console.log(`#${step} Custom Validation Step: ${outputMessage}`);
 }
 PlainLogReporter.prototype.expectationError = function (step, received, error) {
-  let expectedErrorMsg =  this.normizalizeForOutput( error );
-  console.error(`#${step} Expectation Error: ${this.normizalizeForOutput(expectedErrorMsg)}`);
+  console.error(`#${step} Expectation Error: ` +error);
 }
 PlainLogReporter.prototype.error = function (errorHeader, message) {
   if ( "undefined" == typeof errorHeader ) {

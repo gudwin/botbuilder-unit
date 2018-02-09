@@ -86,9 +86,8 @@ BotMessage.prototype.validateBotMessage = function () {
       return Promise.reject(error);
     }
     return Promise.resolve();
+
   }
-
-
 }
 BotMessage.prototype.validateTyping = function () {
   if (!this.config.typing) {
@@ -120,7 +119,7 @@ BotMessage.prototype.validateAttachmentLayout = function () {
   }
   if ("function" == typeof this.config.attachmentLayout) {
     let promise = this.config.attachmentLayout.call(null, this.receivedMessage.attachmentLayout);
-    if ( !(promise instanceof Promise )) {
+    if (!(promise instanceof Promise )) {
       let msg = `Attachment layout validation by callback failed. Callback MUST return a promise`;
       return Promise.reject((msg));
     }
@@ -201,7 +200,7 @@ BotMessage.prototype.validateSuggestedActions = function () {
   }
   let isRangeError = this.config.suggestedActions.length != this.receivedMessage.suggestedActions.actions.length;
   if (isRangeError) {
-    let msg = (`Step #${this.step}, amount of received suggested actions (${this.receivedMessage.suggestedActions.actions.length}) differs from expected  (${this.config.suggestedActions.length})`);
+    let msg = (`Step #${this.step}, amount of received suggested actions (${this.receivedMessage.suggestedActions.actions.length}) differs from expected (${this.config.suggestedActions.length})`);
     return Promise.reject(msg);
   }
 
@@ -215,10 +214,17 @@ BotMessage.prototype.validateSuggestedActions = function () {
 
     let isOk = isSameTitle && isSameType && isSameValue;
     if (!isOk) {
-      let msg = `Step #${this.step}, Failed to compare actions with index ${i}. Reasons:`
-        + (!isSameTitle ? "\n- Title differs" : '')
-        + (!isSameType ? "\n- Wrong type of the card" : '')
-        + (!isSameValue ? "\n - Messages are different" : '');
+      let msg = `Step #${this.step}, Failed to compare actions with index ${i}. Reasons:`;
+      if ( !isSameTitle ) {
+        msg += `\n- Expected title: ${expectedAction.data.title}\n- Received title: ${messageAction["title"]}`;
+      }
+      if ( !isSameType ) {
+        msg += "\n- Wrong type of the card";
+      }
+      if ( !isSameValue ) {
+        msg += `\n- Messages are different:\n- Expected value: ${expectedAction.data.value}\n- Received value: ${messageAction['value']}`;
+      }
+
       return Promise.reject(msg);
 
     }

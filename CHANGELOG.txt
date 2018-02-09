@@ -28,6 +28,12 @@
 
 
 --------------------------------
+v 0.6.4
+- [OK] Fix for suggested actions error description: display value
+- [OK] Fix for error message, normalize output
+- Fix for expected message feautre: display suggested actions
+
+--------------------------------
 v 0.6.3
 
 - Fix for attachment validation by callback.

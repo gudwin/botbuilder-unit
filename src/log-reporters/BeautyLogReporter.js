@@ -25,7 +25,8 @@ BeautyLogReporter.prototype.refreshDimensions = function (msg) {
   this.contentColumnsPerRow = Math.floor(2 / 3 * this.columnsPerRow);
 }
 BeautyLogReporter.prototype.normalizeOutput = function (message) {
-  return util.inspect(message, {depth: 6, color: true, showHidden: true})
+  let isObject = (message instanceof Object) || ("function" ==  typeof message);;
+  return isObject ? util.inspect(message, {depth: 6, color: true, showHidden: true}) :message;
 }
 BeautyLogReporter.prototype.outputCentralized = function (msg, colorFunc) {
   if (!colorFunc) {
@@ -108,14 +109,6 @@ BeautyLogReporter.prototype.scriptFinished = function () {
 }
 BeautyLogReporter.prototype.messageReceived = function (step, message) {
   let outputMessage = this.normalizeOutput(message);
-  if ( message.suggestedActions ) {
-    if ( message.suggestedActions.actions ) {
-      outputMessage += `\n\n--\nSuggested actions:`;
-      message.suggestedActions.actions.forEach((item) => {
-        outputMessage += `\n - ${item.value}`;
-      });
-    }
-  }
   if ( message.attachmentLayout ) {
     outputMessage += `\n-- attachmentLayout:${message.attachmentLayout}`
   }
@@ -160,9 +153,8 @@ BeautyLogReporter.prototype.expectationError = function (step, received, error )
     this.finalReport.firstErrorOnStep = step;
     this.finalReport.error = error;
   }
-  this.outputCentralized(`EXPECTATION ERROR ON STEP #${step}`, colors.red)
+  this.outputCentralized(`EXPECTATION ERROR ON STEP #${step}`, colors.red);
   this.error('Error:', error);
-
 }
 BeautyLogReporter.prototype.error = function (errorHeader, message) {
   if (!this.finalReport.error) {
