@@ -1,4 +1,5 @@
 
+- [NO][Major] Check message text first, at current moment suggested actions validated firstt
 - [NO][Major] subscripts injection;
 - [NO][Major] support Direct Line
 - [NO][Major] support for several parallel conversations

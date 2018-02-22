@@ -10,7 +10,6 @@ module.exports = [
       botbuilder.CardAction.imBack(null, "add", "Add"),
       botbuilder.CardAction.imBack(null, "modules", "Modules"),
       botbuilder.CardAction.imBack(null, "test me", "Test me"),
-      botbuilder.CardAction.imBack(null, "settings", "Settings")
     ]
   },
   {

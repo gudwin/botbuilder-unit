@@ -430,6 +430,7 @@ The library exposes `config` object in module.exports. Properties of an object:
 - [Richcard Validation Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/04-richcard/richcard.js?raw=true)
 
 # Changelog
+- 0.6.5 - Switched license to LGPL, more tests for suggested actions;
 - 0.6.4 - Better error messages;
 - 0.6.3 - Fix for attachment validation by callback. Better error messages. Smoke tests for log reporters;
 - 0.6.2 - Better error messages;
