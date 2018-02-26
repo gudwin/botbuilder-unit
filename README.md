@@ -36,17 +36,25 @@ Table of Contents
    * [Changelog](#changelog)
 
 # Glossary
-- **script** or **conversation spec** - an array of messages describing flow of conversation with a bot;
-- **filter** function - a custom function that will be called by Library. The function should return a [Promise](https://promisesaplus.com/).
+- **script** or **conversation spec** - array of objects. Script is a step-by-step specification for conversation between a human and an application;
+- **filter** function - a custom function that will be called by Library. Used to inject async data, the function should return a [Promise](https://promisesaplus.com/);
+- **MBF** - Microsoft Bot Framework, Node.JS version; 
 
 # Introduction
 
-This is a test framework for chatbots leveraging Microsoft Bot Framework Chatbots. At current moment, functional tests supported by the framework. Comperhensive support for unit testing will be implemented in short term future.
+> The Library still in an active development, so don't hesitate to propose changes and new features! Backward compatibility of API not guaranteed before 1.0 release.
 
-As an input the Library requires a bot and a script.
+This is a test framework for chatbots developed with Microsoft Bot Framework for Node.JS. Supports both unit and functional tests. In background of MBF 
+
+Emulates a conversation between user and bot. Provides input for bot and validates response. Each test requires a script - array of steps, where every step represents of next entities:
+
+* Validator for Bot response;
+* An Input for bot;
+* Conversation State validator or modifier;
+* Custom action, with logic injected by test developer;;
+
+Test fails if conversation deviates from specified in script.
  
-> The Library still in an active development, so don't hesitate to propose changes and new features.
-
 ## WARNING Migration to 0.6.* version 
 
 - __before__ and __after__ attributes are not supported anymore, use **custom** steps instead;
@@ -56,20 +64,20 @@ I apologize for the inconvenience.
 
 ##  List of supported features:
  
-- ability to emulate a conversation between the user and the bot; 
-- ability to setup expected messages from the bot. Supported expectations are:
-  - validation of textual (string) part of response from the bot: by equality or by regular expression;
-  - botbuilder [prompts](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-prompt);
-  - conversation [endings](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-manage-conversation-flow#end-conversation) and typing [indicators](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator);
-  - validation of [suggested actions](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-suggested-actions);
-  - **custom validators**;
-- attachment and richcard validation;
-- session state management;
-- active dialog and default params management;
-- timeouts for test;
-- mocking of responses from the bot;
-- custom validation steps in script  
-- configurable reporting;
+* Support bots (for functional tests) and dialogs (unit testing); 
+* Built-in validators:
+  * text : message text. Could be an exact phrase or regular expression  by equality or by regular expression;
+  * [prompts](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-prompt);
+  * conversation [endings](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-dialog-manage-conversation-flow#end-conversation) and typing [indicators](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator);
+  * validation of [suggested actions](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-suggested-actions);
+  * attachment and richcard validation;
+
+* session state management;
+* active dialog and default params management;
+* timeout validation;
+* custom validation login as a step of the script
+* configurable reporting;
+* mocking of responses from a bot, use it if you need only to prototype conversation;
 
 # Quick Start
 
@@ -101,7 +109,6 @@ let script = [
 ];
 
 // Setting up a bot
-let connector = new builder.ConsoleConnector().listen();
 bot = new builder.UniversalBot(connector);
 bot.dialog('/', [
   session => builder.Prompts.text(session, 'How should I call you?'),
@@ -115,11 +122,9 @@ unit(bot, script, {
 }).then(() => {
   // If test finished successfully
   console.log('Script passed');
-  process.exit();
 }, (err)  => {
   console.error(err);
 })
-
 ```
 
 ## Execute Script
@@ -134,19 +139,36 @@ At the end you will see next result:
 
 # Configuration
 
-## Script level
 
-The Script is just an array with simple objects (at this version) where every item represents a message in conversation between user and the bot. The Library supposes that first message **always be** from user. That issue will be fixed in future fixes.
+## Script Messages
 
-### Script Messages
-There are three message types supported, they identified by attribute:
- - **user**, for sending messages to bot
- - **bot**, to specify an expected message from bot  
- - **session**, to manipulate session and startup dialog
- - ***endConversation**, to specify that conversation will be finished
- - **typing**, to specify if you want to validate that [typing indicator](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator) sent
- - **dialog**, sets current dialog for bot instance, could be used together with **args** option 
- - **args**, set default arguments for bot instance, could be used together with **dialog** option
+As already mentioned, all steps are divided into groups of activities, each step is key-value object. Each activity defines a set of unique keys. So, the Library differentiates steps key used in a step configuration. 
+
+Each key represents a concrete action. Some keys could used together, in one step. If key name marked as **standalone**, that means the key always alone in a step.
+It is not possible to mix key of different activities. 
+
+Full list of supported step attributes:
+
+* Bot Response Validation. :
+
+  * **bot**:(string|filter) -  message text, received from bot;
+  * **suggestedActions**: array - validates suggestedActions of received message ;
+  * **attachmentLayout**: string - used to identify layout, a way how attachments ordered and displayed. Usually one of _list_ or _carousel_.
+  * **attachments**: array - each item represents an attachment, meta-data and content;
+  * standalone ***endConversation**: null, use it to specify that conversation will be finished;
+  * standalone **typing**: null, use it, if you want to validate that [typing indicator](https://docs.microsoft.com/en-us/bot-framework/nodejs/bot-builder-nodejs-send-typing-indicator) sent;
+
+* Input from User:
+
+  * **user**: (string|filter) text message or instance of Botbuilder.Message
+
+* Session Management:
+
+ * **session** (object|filter) - used to set value of session or to validate it (see examples below);
+
+ 
+ * **dialog**, sets current dialog for bot instance, could be used together with **args** option 
+ * **args**, set default arguments for bot instance, could be used together with **dialog** option
    
   
 ### User Messages
@@ -402,6 +424,20 @@ The library exposes `config` object in module.exports. Properties of an object:
   - **EmptyLogReporter**, nothing will be sent to output
   - **PlainLogReporter**, colored and styled output, useful for long scripts 
 
+# API
+
+- **unit(target, script, options)** or **unit(dialog, script, options)** - Tests given bot instance or dialog with script. Returns a Promise that will be resolved in case of success. Method arguments:
+
+  * **target** <UniversalBot|function|Array> - Bot or dialog. The Library will treat function and array as a dialog;
+  * **script** <Array> - List of test steps, each step represents one piece of conversation between a user and a bot;
+  * (optional) **options** <Object> - a key-value object. Allowed keys:
+
+key | description
+--- | ---
+title | <String|null> value that represents test title. Will be rendered in test report
+timeout | <int> allowed execution time for a test
+reporter | <BaseLogReporter> an log reporter instance, overwrites default log reporter
+
 # Mocking responses from the bot 
  
  Library provides an **ConversationMock** class with purpose to mock responses from the chatbot. Possible use cases for such feature are:
@@ -412,6 +448,7 @@ The library exposes `config` object in module.exports. Properties of an object:
 ## ConversationMock 
 
 ### new ConversationMock( steps ) 
+
  Where **steps** is an array of standard waterfall dialog functions. Each step will be executed only once. The Library will pass standard arguments: __session__, __arguments__,__next__ into step.  
  
 ### ConversationMock.prototype
@@ -419,17 +456,23 @@ The library exposes `config` object in module.exports. Properties of an object:
 - **getListener()** returns a listener for WaterfallDialog. Once the listener executed the first step will be executed, and will move internal pointer to a next step. Second call will execute second step callback and so on...
 
 ### ConversationMock static methods
+
 - **sendMessagesStep( messages, afterFunc)** - Creates a step for waterfall dialog. Arguments:
+
   - **messages** argument is an array of strings, these messages will be sent to user; 
   - **afterFunc**__(session, args, next)__ is a callback, will be called after messages will be sent.  
 
 # Examples
+
 - [Base Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/01-timmy/timmy.js?raw=true)
 - [Session Management Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/02-session/session.js?raw=true)
 - [Startup Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/03-startup/startup.js?raw=true)
-- [Richcard Validation Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/04-richcard/richcard.js?raw=true)
+- [Rich Card Validation Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/04-richcard/richcard.js?raw=true)
+- [Testing Standalone Dialog Example](https://github.com/gudwin/botbuilder-unit/blob/master/examples/05-dialog/dialog.js?raw=true)
 
-# Changelog
+# ChangeLog
+
+- 0.7.0 - new method - **dialog(waterfallDialog, script)**, MemoryConnector, methods for testing standalone dialog or middleware, 
 - 0.6.5 - Switched license to LGPL, more tests for suggested actions;
 - 0.6.4 - Better error messages;
 - 0.6.3 - Fix for attachment validation by callback. Better error messages. Smoke tests for log reporters;

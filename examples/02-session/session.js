@@ -31,8 +31,7 @@ let script = [
 ];
 
 
-let connector = new builder.ConsoleConnector().listen();
-bot = new builder.UniversalBot(connector);
+bot = new builder.UniversalBot();
 bot.dialog('/', [
   session => session.endDialog(`Hello, ${session.userData.name}!`)
 ]);

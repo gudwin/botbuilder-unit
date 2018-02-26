@@ -17,8 +17,7 @@ let script = [
 // 2. Create Bot instance
 // 3. Setup index ("/") dialog
 // 4. Setup "my-test" dialog, the dialog couldb't be reached from index dialog
-let connector = new builder.ConsoleConnector().listen();
-bot = new builder.UniversalBot(connector);
+bot = new builder.UniversalBot();
 bot.dialog('/', [
   session => session.endDialog('Index Dialog')
 ]);

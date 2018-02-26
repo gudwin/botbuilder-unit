@@ -17,9 +17,8 @@ let script = [
   }
 ];
 
-// Setting up a bot
-let connector = new builder.ConsoleConnector().listen();
-bot = new builder.UniversalBot(connector);
+// Setting up bot
+bot = new builder.UniversalBot();
 bot.dialog('/', [
   session => builder.Prompts.text(session, 'How should I call you?'),
   (session, response) => session.endDialog(`Nice to meet you, ${JSON.stringify(response.response)}!`)
