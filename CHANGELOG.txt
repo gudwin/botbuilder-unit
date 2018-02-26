@@ -1,4 +1,8 @@
 
+- [FOREVER][Maintainability] Improve Error Messages
+
+- [NO][Major] Support for validation on in array of messages
+- [NO][Major] To test bot by another bot
 - [NO][Major] Check message text first, at current moment suggested actions validated firstt
 - [NO][Major] subscripts injection;
 - [NO][Major] support Direct Line
@@ -7,7 +11,7 @@
 - support for internationalization
 
 - [NO][Maintainability] extract log reporters to a separate library
-- [NO][Maintainability] reorganize tests about Messages (like BotMessages)
+- [NO][Maintainability] reorganize tests arround Messages (like BotMessage)
 - [NO][Maintainability] provide a pipeline for deployment
  -- run tests
  -- validate that samples still valid
@@ -18,15 +22,17 @@
 - [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
 - [NO][Discoverability] example for testing recognizer;
 - [NO][Discoverability] example with subscript
-
-- [NO][Maintainability] Disable ConsoleConnector default output
-
 - [NO] OneOfNextMessages(message, count ) validation step;
 - [NO] TillResponseMessage(message) validation step;
 - [NO] IgnoreTillMessage (messageText, maxCount = 0)
 - [NO] prepare automated tests for log reporters;
 
 
+--------------------------------
+v 0.7.0
+- [NO][Maintainability] Produce TestConnector default output
+- [NO][Major] Test standalone dialog (autogenerate bot, session)
+- [NO][Major] Test standalone middleware
 
 --------------------------------
 v 0.6.4
