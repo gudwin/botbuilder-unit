@@ -1,4 +1,5 @@
 [![GitHub version](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit.svg)](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit)
+[![Build Status](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)
 
 
 # Glossary

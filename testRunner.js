@@ -1,7 +1,7 @@
 process.on('uncaughtException', function (exception) {
   console.log(exception);
 });
-process.on('unhandledRejection', (reason, p) => {
+process.on('unhandledRejection', function (reason, p) {
   console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
 });
 
@@ -16,9 +16,8 @@ jasmine.configureDefaultReporter({
 
 var Reporter = require('jasmine-terminal-reporter');
 var reporter = new Reporter({
-  isVerbose : true,
-  includeStackTrace : true
-
+  isVerbose: true,
+  includeStackTrace: true
 })
-jasmine.addReporter( reporter );
+jasmine.addReporter(reporter);
 jasmine.execute();
