@@ -2,3 +2,6 @@ language: node_js
 install:
 - npm install
 - npm test
+node_js:
+  - "node"
+  - "8"
