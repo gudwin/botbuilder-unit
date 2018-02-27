@@ -164,12 +164,14 @@ Full list of supported step attributes:
 
 * Session Management:
 
- * **session** (object|filter) - used to set value of session or to validate it (see examples below);
+   * **session** (object|filter) - used to set value of session or to validate it (see examples below);
 
- 
+* Dialog Management:
+
  * **dialog**, sets current dialog for bot instance, could be used together with **args** option 
  * **args**, set default arguments for bot instance, could be used together with **dialog** option
    
+## Step Examples
   
 ### User Messages
 
@@ -426,17 +428,19 @@ The library exposes `config` object in module.exports. Properties of an object:
 
 # API
 
-- **unit(target, script, options)** or **unit(dialog, script, options)** - Tests given bot instance or dialog with script. Returns a Promise that will be resolved in case of success. Method arguments:
+* **unit(target, script, options)** or **unit(dialog, script, options)** - Tests given bot instance or dialog with script. Returns a Promise that will be resolved in case of success. Method arguments:
 
-  * **target** <UniversalBot|function|Array> - Bot or dialog. The Library will treat function and array as a dialog;
-  * **script** <Array> - List of test steps, each step represents one piece of conversation between a user and a bot;
-  * (optional) **options** <Object> - a key-value object. Allowed keys:
+  * **target** UniversalBot | function | Array, Bot or dialog. The Library will treat function and array as a dialog;
+  * **script** Array, List of test steps, each step represents one piece of conversation between a user and a bot;
+  * (optional) **options** object - a key-value object. 
+  
+## Options Object
 
 key | description
 --- | ---
-title | <String|null> value that represents test title. Will be rendered in test report
-timeout | <int> allowed execution time for a test
-reporter | <BaseLogReporter> an log reporter instance, overwrites default log reporter
+title | String or null, value that represents test title. Will be rendered in test report
+timeout | Integer, allowed execution time for a test
+reporter | intance of BaseLogReporter,  an log reporter instance, overwrites default log reporter
 
 # Mocking responses from the bot 
  
@@ -449,7 +453,7 @@ reporter | <BaseLogReporter> an log reporter instance, overwrites default log re
 
 ### new ConversationMock( steps ) 
 
- Where **steps** is an array of standard waterfall dialog functions. Each step will be executed only once. The Library will pass standard arguments: __session__, __arguments__,__next__ into step.  
+Where **steps** is an array of standard waterfall dialog functions. Each step will be executed only once. The Library will pass standard arguments: __session__, __arguments__,__next__ into step.  
  
 ### ConversationMock.prototype
  
