@@ -1,39 +1,5 @@
 [![GitHub version](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit.svg)](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit)
 
-Table of Contents
-=================
-
-   * [Table of Contents](#table-of-contents)
-   * [Glossary](#glossary)
-   * [Introduction](#introduction)
-      * [WARNING Migration to 0.6.* version](#warning-migration-to-06-version)
-      * [List of supported features:](#list-of-supported-features)
-   * [Quick Start](#quick-start)
-      * [Install library](#install-library)
-      * [Create Test Script](#create-test-script)
-      * [Execute Script](#execute-script)
-   * [Installation](#installation)
-   * [Configuration](#configuration)
-      * [Global options](#global-options)
-         * [As an Environment Variable](#as-an-environment-variable)
-         * [As a part of the Library module.exports](#as-a-part-of-the-library-moduleexports)
-      * [Script level](#script-level)
-         * [Script Messages](#script-messages)
-         * [User Messages](#user-messages)
-         * [Expected Responses](#expected-responses)
-         * [Richcards and Attachments validation](#richcards-and-attachments-validation)
-         * [Session Management](#session-management)
-         * [Validating ending of conversation](#validating-ending-of-conversation)
-         * [Validating typing indicator](#validating-typing-indicator)
-         * [Custom Steps](#custom-steps)
-         * [Set Current Dialog](#set-current-dialog)
-   * [Mocking responses from the bot](#mocking-responses-from-the-bot)
-      * [ConversationMock](#conversationmock)
-         * [new ConversationMock( steps )](#new-conversationmock-steps-)
-         * [ConversationMock.prototype](#conversationmockprototype)
-         * [ConversationMock static methods](#conversationmock-static-methods)
-   * [Examples](#examples)
-   * [Changelog](#changelog)
 
 # Glossary
 - **script** or **conversation spec** - array of objects. Script is a step-by-step specification for conversation between a human and an application;
@@ -211,8 +177,8 @@ It is possible to validate bot messages with RegExps:
 ```
 
 or with a _filter_ function. The Library will pass two arguments into the function:
-- **bot**, a bot instance itself,
-- **receivedMessage**, a message object received from bot 
+* **bot**, a bot instance itself,
+* **receivedMessage**, a message object received from bot 
 
 Next example presents usage of filter function, that validates if chatbot returned a Number in range of 0 to 100:
 ```javascript
@@ -370,11 +336,12 @@ Example:
  
 ### Custom Steps
 
-It is possible to inject a custom step into the script. Such step contains a user-defined  _filter_ function (in attribute _custom_)_ that  **MUST** return a Promise object. 
-Depending on a state of the Promise the Library 
-- while the Promise in _pending_ state the Library will wait 
-- _rejected_ state will stop execution of the script with error returned from
-- _fulfilled_ (resolved) state will continue the script execution
+It is possible to inject a custom step into the script. Such step contains a user-defined  _filter_ function (in attribute _custom_)_ that  **MUST** return a Promise object.
+ 
+Once, when the Promise will appear resolved/rejected state:
+
+* _rejected_ state will stop active test execution  with error returned by the Promise
+* _fulfilled_ (resolved) state will continue the script execution
 
 Example:
 ```javacript
@@ -428,9 +395,9 @@ The library exposes `config` object in module.exports. Properties of an object:
 
 # API
 
-* **unit(target, script, options)** or **unit(dialog, script, options)** - Tests given bot instance or dialog with script. Returns a Promise that will be resolved in case of success. Method arguments:
+* **unit(bot , script, options)** or **unit(dialog, script, options)** - Tests given bot instance or dialog with script. Returns a Promise that will be resolved in case of success. Method arguments:
 
-  * **target** UniversalBot | function | Array, Bot or dialog. The Library will treat function and array as a dialog;
+  * **bot** | **dialog** UniversalBot | function | Array, Bot instance or a dialog. Dialogs wrapped by Library into empty UniversalBot instance.  
   * **script** Array, List of test steps, each step represents one piece of conversation between a user and a bot;
   * (optional) **options** object - a key-value object. 
   
