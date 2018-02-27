@@ -13,6 +13,9 @@ const UserMessage = require(SrcBasePath + '/messages/UserMessage');
 const SessionMessage = require(SrcBasePath + '/messages/SessionMessage');
 const SetDialogMessage = require(SrcBasePath + '/messages/SetDialogMessage');
 
+const TestConnector = require(SrcBasePath + '/TestConnector');
+
+const builder = require('botbuilder');
 
 function detectReporter() {
   switch (process.env.BOTBUILDERUNIT_REPORTER) {
@@ -25,16 +28,32 @@ function detectReporter() {
       return (new PlainLogReporter());
   }
 }
+/**
+ * Wraps arrays and functions into instance of UniversalBot
+ * Ensure that given bot has connector, otherwise inject TestConnector
+ *
+ * @param bot
+ * @returns {*}
+ */
+function resolveBot(bot) {
+  let isWaterfall = ("function" == typeof bot) || Array.isArray(bot);
+  if (isWaterfall) {
+    let dialog = bot;
+    let connector = new TestConnector();
+    bot = new builder.UniversalBot(connector);
+    bot.dialog('/', dialog);
+  } else if (bot instanceof builder.UniversalBot) {
+    if ( !bot.connector()) {
+      bot.connector('console', new TestConnector());
+    }
+  } else {
+    throw new Error(`Unknown type of bot/dialog. Error: ${JSON.stringify(bot)}`);
+  }
+  return bot;
+}
 
 
 function testBot(bot, messages, options) {
-  options = Object.assign({
-    timeout: module.exports.config.timeout,
-    reporter: module.exports.config.reporter,
-    title: ''
-  }, options);
-  messages = messages.slice(0);
-
   function getLogReporter() {
     return options.reporter;
   }
@@ -44,6 +63,14 @@ function testBot(bot, messages, options) {
       check[name](bot, args);
     }
   }
+
+  bot = resolveBot(bot);
+  options = Object.assign({
+    timeout: module.exports.config.timeout,
+    reporter: module.exports.config.reporter,
+    title: ''
+  }, options);
+  messages = messages.slice(0);
 
   return new Promise(function (resolve, reject) {
     var step = 0;
@@ -89,7 +116,7 @@ function testBot(bot, messages, options) {
         prevStepFinishedPromise = scriptStep.getStepFinishedPromise()
         prevStepFinishedPromise.then(() => {
           step = i;
-        },fail)
+        }, fail)
       });
 
       prevStepFinishedPromise.then(done, fail);
@@ -128,7 +155,7 @@ function testBot(bot, messages, options) {
         })
 
         if (!found) {
-          getLogReporter().messageReceived(extraMessageIndex,message)
+          getLogReporter().messageReceived(extraMessageIndex, message)
           getLogReporter().warning(`Warning at EXTRA STEP ${extraMessageIndex}`, 'Ignoring message (Out of Range)');
           extraMessageIndex++;
           // As more messages could appear, I suppose that is better to track them
@@ -157,4 +184,5 @@ module.exports.BotMessage = BotMessage;
 module.exports.UserMessage = UserMessage;
 module.exports.SetDialogMessage = SetDialogMessage;
 module.exports.SessionMessage = SessionMessage;
+module.exports.TestConnector = TestConnector;
 module.exports.DEFAULT_ADDRESS = SessionMessage.DEFAULT_ADDRESS;
