@@ -22,7 +22,7 @@
     "jasmine-terminal-reporter": "^1.0.3"
   },
   "scripts": {
-    "test": "export NODE_DEBUG=botbuilder; node ./spec/runner.js "
+    "test": "export NODE_DEBUG=botbuilder; node ./testRunner.js "
   },
   "bugs": {
     "url": "https://github.com/gudwin/botbuilder-unit/issues",
@@ -36,13 +36,10 @@
     "botbuilder",
     "tdd",
     "bdd",
-    "test",
-    "unit",
-    "bots",
-    "functional testing",
+    "bot-framework",
+    "test-framework",
     "chatbot",
-    "chatbot-framework",
-    "mbf"
+    "chatbot-framework"
   ],
   "author": "Dmitry Shevchenko",
   "license": "GNU LGPL 3.0"
