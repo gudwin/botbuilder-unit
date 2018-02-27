@@ -1,6 +1,41 @@
 [![GitHub version](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit.svg)](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit)
 [![Build Status](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)
 
+Table of Contents
+=================
+
+   * [Glossary](#glossary)
+   * [Introduction](#introduction)
+      * [WARNING Migration to 0.6.* version](#warning-migration-to-06-version)
+      * [List of supported features:](#list-of-supported-features)
+   * [Quick Start](#quick-start)
+      * [Install library](#install-library)
+      * [Create Test Script](#create-test-script)
+      * [Execute Script](#execute-script)
+   * [Installation](#installation)
+   * [Configuration](#configuration)
+      * [Script Messages](#script-messages)
+      * [Step Examples](#step-examples)
+         * [User Messages](#user-messages)
+         * [Expected Responses](#expected-responses)
+         * [Richcards and Attachments validation](#richcards-and-attachments-validation)
+         * [Session Management](#session-management)
+         * [Validating ending of conversation](#validating-ending-of-conversation)
+         * [Validating typing indicator](#validating-typing-indicator)
+         * [Custom Steps](#custom-steps)
+         * [Set Current Dialog](#set-current-dialog)
+      * [Global options](#global-options)
+         * [As an Environment Variable](#as-an-environment-variable)
+         * [As a part of the Library module.exports](#as-a-part-of-the-library-moduleexports)
+   * [API](#api)
+      * [Options Object](#options-object)
+   * [Mocking responses from the bot](#mocking-responses-from-the-bot)
+      * [ConversationMock](#conversationmock)
+         * [new ConversationMock( steps )](#new-conversationmock-steps-)
+         * [ConversationMock.prototype](#conversationmockprototype)
+         * [ConversationMock static methods](#conversationmock-static-methods)
+   * [Examples](#examples)
+   * [ChangeLog](#changelog)
 
 # Glossary
 - **script** or **conversation spec** - array of objects. Script is a step-by-step specification for conversation between a human and an application;
