@@ -1,7 +1,7 @@
 
 - [FOREVER][Maintainability] Improve Error Messages
 
-- [NO][Major] Toggleable pieces of report: current session state, dialog stack, loaded dialogs, execution time ?
+
 - [NO][Major] Introduce custom-specific exception classes
 - [NO][Major] Support for validation on in array of messages
 - [NO][Major] To test bot by another bot
@@ -20,8 +20,6 @@
  -- inject TOC
  -- message that code ready to be published
 
-- [NO][Discoverability] provide an example that shows Autoload functionality
-
 - [NO][Discoverability] example for testing recognizer;
 - [NO][Discoverability] example with subscript
 - [NO] OneOfNextMessages(message, count ) validation step;
@@ -29,16 +27,23 @@
 - [NO] IgnoreTillMessage (messageText, maxCount = 0)
 - [NO] prepare automated tests for log reporters;
 
+
+--------------------------------
+v 0.7.2
+
+- [NO][Major] Toggleable pieces of report: current session state, dialog stack, loaded dialogs, execution time ?
+- [NO][Maintainability] - integrate TOC injection
 --------------------------------
 v 0.7.1
-- [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
+- [OK][Discoverability] integrate code coverage
 - [Maintainability] Improved Attachment Errors
 
 --------------------------------
 v 0.7.0
-- [NO][Maintainability] Produce TestConnector default output
-- [NO][Major] Test standalone dialog (autogenerate bot, session)
-- [NO][Major] Test standalone middleware
+- [OK][Maintainability] Produce TestConnector default output
+- [OK][Major] Test standalone dialog (autogenerate bot, session)
+- [OK][Major] Test standalone middleware
+-
 
 --------------------------------
 v 0.6.4

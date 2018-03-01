@@ -1,5 +1,6 @@
 [![GitHub version](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit.svg)](https://badge.fury.io/gh/gudwin%2Fbotbuilder-unit)
 [![Build Status](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)](https://travis-ci.org/gudwin/botbuilder-unit.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/gudwin/botbuilder-unit/badge.svg?branch=master)](https://coveralls.io/github/gudwin/botbuilder-unit?branch=master)
 
 Table of Contents
 =================
@@ -479,7 +480,7 @@ Where **steps** is an array of standard waterfall dialog functions. Each step wi
 
 # ChangeLog
 
-- 0.7.1 - code coverage 100%, finally. Improved attachment validation errors. 
+- 0.7.1 - code coverage tool integrated into CI pipeline, finally. Improved attachment validation errors. 
 - 0.7.0 - new method - **dialog(waterfallDialog, script)**, MemoryConnector, methods for testing standalone dialog or middleware, 
 - 0.6.5 - Switched license to LGPL, more tests for suggested actions;
 - 0.6.4 - Better error messages;
