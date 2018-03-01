@@ -5,7 +5,6 @@ describe('Timeout test suite', function () {
   let bot = null;
 
   let sendProactiveMessage = (address) => {
-    console.log(address);
     var msg = new builder.Message().address(address);
     msg.text('hi!');
     msg.textLocale('en-US');
@@ -22,7 +21,7 @@ describe('Timeout test suite', function () {
         }
       ])
     } catch (e) {
-      console.log(e);
+      fail(e);
     }
     done();
   });

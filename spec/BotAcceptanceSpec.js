@@ -56,9 +56,8 @@ describe('Basic Test Suite: text user/bot messages with user', function () {
     });
 
     unit( bot, script, {
-      title: 'Test that connector added by defaul'
+      title: 'Test that connector added by default'
     } ).then( function () {
-      console.log(bot);
       done();
     });
   })

@@ -17,29 +17,8 @@ function BotMessage(step, config, bot, logReporter, prevStepPromise) {
 BotMessage.prototype = Object.create(BaseScriptStep.prototype);
 BotMessage.prototype.constructor = BotMessage;
 
-BotMessage.prototype.isStepHasValidator = function () {
-  return ("undefined" != typeof this.config.bot)
-    || ("undefined" != typeof this.config.suggestedActions)
-    || ("undefined" != typeof this.config.attachments)
-    || ("undefined" != typeof this.config.endConversation)
-    || ("undefined" != typeof this.config.typing)
-}
-
-
 BotMessage.prototype.validate = function () {
-
   return new Promise((resolve, reject) => {
-    if (null == this.receivedMessage) {
-      let msg = 'Can\'t continue validation. There are no received message';
-      reject(msg);
-      return;
-    }
-    if (!this.isStepHasValidator()) {
-      let msg = `Unable to find matching validator. Step config:\n${inspect(this.config)}`;
-      reject();
-      return;
-    }
-
     this.validateSuggestedActions()
       .then(() => {
         return this.validateAttachments();
@@ -114,77 +93,101 @@ BotMessage.prototype.validateEndConversation = function () {
   }
 }
 BotMessage.prototype.validateAttachmentLayout = function () {
+  function returnValidationError(errorMessage, rejectionError) {
+    let msg = 'Validation of Attachment Layout Failed:' + errorMessage;
+
+    if (rejectionError) {
+      msg += "\n Rejection Error Captured:\n" + rejectionError.toString ? rejectionError.toString() : inspect(rejectionError);
+      throw rejectionError;
+    }
+    if (rejectionError) {
+
+    }
+    return Promise.reject((msg))
+  }
+
   if (!this.config.attachmentLayout) {
     return Promise.resolve();
   }
   if ("function" == typeof this.config.attachmentLayout) {
     let promise = this.config.attachmentLayout.call(null, this.receivedMessage.attachmentLayout);
     if (!(promise instanceof Promise )) {
-      let msg = `Attachment layout validation by callback failed. Callback MUST return a promise`;
-      return Promise.reject((msg));
+      return returnValidationError('Callback MUST return a promise');
     }
-    return promise.catch(() => {
-      let msg = `Attachment layout validation by callback failed.`;
-      return Promise.reject((msg));
+    return promise.catch((error) => {
+      return returnValidationError('Promise returned by Callback rejected.', error);
     })
   } else if (this.config.attachmentLayout == this.receivedMessage.attachmentLayout) {
     return Promise.resolve();
   } else {
-    let msg = `Attachment layout validation failed:<${this.receivedMessage.attachmentLayout}> does not match <${this.config.attachmentLayout}>`;
-    return Promise.reject(msg);
+    let msg = 'Expected value != Received value\n'
+      + '\nExpected value: ' + inspect(this.config.attachmentLayout)
+      + '\nReceived value: ' + inspect(this.receivedMessage.attachmentLayout)
+    return returnValidationError(msg);
+
   }
 }
 
 BotMessage.prototype.validateAttachments = function () {
-  if (!this.config.attachments) {
-    return Promise.resolve();
-  }
 
-  let iterateAndValidate = function (validatorConfig, receivedValue, path) {
+
+  let iterateAndValidate = function (validatorConfig, receivedValue, path, error) {
+    function throwValidationError(title, keyPath, optionalPromiseError) {
+      let msg = '[Attachment validation failed] ' + title
+        + '\nExpected value: ' + inspect(validatorConfig)
+        + '\nReceived value: ' + inspect(receivedValue)
+        + '\nKey Path to Failure in attachment: ' + keyPath + "\n";
+
+      if (optionalPromiseError) {
+        msg += `[Rejection Error Received]:\n${inspect(optionalPromiseError)}`
+      }
+
+      let result = new Error(msg);
+      result.promiseError = error;
+      throw result;
+    }
+
     if ("function" == typeof validatorConfig) {
       let promise = validatorConfig.call(null, receivedValue, path);
       if (!(promise instanceof Promise )) {
-        throw ('Attachment validation by callback failed. Callback MUST return a Promise');
+        throwValidationError('Callback MUST return a Promise', path);
       }
-
-      return promise.catch((error) => {
-        let msg = `Attachment validation by callback failed. Path: ${path}`;
-        if (error) {
-          msg += ' Error:' + inspect(error)
-        }
-        throw (msg);
+      return promise.catch((optionalPromiseError) => {
+        throwValidationError('The Promise instance returned by callback rejected. ', path, optionalPromiseError);
       })
     } else if (Array.isArray(validatorConfig)) {
       if (!Array.isArray(receivedValue)) {
-        let msg = `Attachment validation failed, array must exist at path: ${path}`;
-        throw msg;
+        throwValidationError('Array instance expected. ', path);
       }
       validatorConfig.forEach((item, i) => {
         iterateAndValidate(item, receivedValue[i], path + `[${i}]`)
       });
     } else if ("object" == typeof validatorConfig) {
       if ("object" != typeof receivedValue) {
-        let msg = `Attachment validation failed, object must exist at path: ${path}`;
-        throw msg;
+        throwValidationError('Object instance expected. ', path);
       }
       for (let key in validatorConfig) {
-        if (!validatorConfig.hasOwnProperty(key)) {
-          continue;
+        if (validatorConfig.hasOwnProperty(key)) {
+          iterateAndValidate(validatorConfig[key], receivedValue[key], path + `[${key}]`);
         }
-        iterateAndValidate(validatorConfig[key], receivedValue[key], path + `[${key}]`);
       }
     } else if (validatorConfig != receivedValue) {
-      let msg = `Attachment validation failed at path: ${path}`;
-      throw msg;
+      throwValidationError('Scalar value expected. ', path);
     }
+  }
 
+  if (!this.config.attachments) {
+    return Promise.resolve();
   }
-  try {
-    iterateAndValidate(this.config.attachments, this.receivedMessage.attachments, 'attachments');
-  } catch (e) {
-    return Promise.reject(e);
+
+  let response = iterateAndValidate(this.config.attachments, this.receivedMessage.attachments, 'attachments')
+  if (response instanceof Promise) {
+    return response;
+  } else {
+    return Promise.resolve();
   }
-  return Promise.resolve();
+
+
 }
 BotMessage.prototype.validateSuggestedActions = function () {
 
@@ -215,13 +218,13 @@ BotMessage.prototype.validateSuggestedActions = function () {
     let isOk = isSameTitle && isSameType && isSameValue;
     if (!isOk) {
       let msg = `Step #${this.step}, Failed to compare actions with index ${i}. Reasons:`;
-      if ( !isSameTitle ) {
+      if (!isSameTitle) {
         msg += `\n- Expected title: ${expectedAction.data.title}\n- Received title: ${messageAction["title"]}`;
       }
-      if ( !isSameType ) {
+      if (!isSameType) {
         msg += "\n- Wrong type of the card";
       }
-      if ( !isSameValue ) {
+      if (!isSameValue) {
         msg += `\n- Messages are different:\n- Expected value: ${expectedAction.data.value}\n- Received value: ${messageAction['value']}`;
       }
 
@@ -232,9 +235,6 @@ BotMessage.prototype.validateSuggestedActions = function () {
   return Promise.resolve();
 }
 BotMessage.prototype.receiveBotReply = function (receivedMessage) {
-  if (this.receivedMessage) {
-    throw new Error('This step already has received message');
-  }
   this.receivedMessage = receivedMessage;
   this.logReporter.messageReceived(this.step, receivedMessage);
   this.replyResolver();

@@ -479,6 +479,7 @@ Where **steps** is an array of standard waterfall dialog functions. Each step wi
 
 # ChangeLog
 
+- 0.7.1 - code coverage 100%, finally. Improved attachment validation errors. 
 - 0.7.0 - new method - **dialog(waterfallDialog, script)**, MemoryConnector, methods for testing standalone dialog or middleware, 
 - 0.6.5 - Switched license to LGPL, more tests for suggested actions;
 - 0.6.4 - Better error messages;

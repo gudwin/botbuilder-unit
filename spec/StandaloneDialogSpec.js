@@ -1,6 +1,15 @@
 const unit = require('../');
 
 describe('Standalone dialogs, ', function () {
+  it('test that other type except function, array and childs on UniversalObjectare not permitted', (done) => {
+    let script = [{user: 'hi'}];
+    try {
+      unit(1,script);
+    } catch (e ) {
+      done();
+    }
+
+  })
   it('test that function will be treated as dialog', (done) => {
     let script = [
       {user: 'hi!'},
@@ -28,7 +37,7 @@ describe('Standalone dialogs, ', function () {
     ]
     let attempt = 0;
     let dialog = [
-      (session,args, next) => {
+      (session, args, next) => {
         if (!attempt) {
           attempt++;
           session.endDialog('hello');

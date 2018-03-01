@@ -1,8 +1,13 @@
 const botFactory = require('./lib/botFactory');
+const wrappers = require('./lib/jasmine-wrappers');
 const unit = require('../');
+const attachmentScript = require('./scripts/attachments/attachmentScript');
 
-const builder= require('botbuilder');
+const builder = require('botbuilder');
 
+function getDefaultAttachmentScript() {
+  return attachmentScript.slice(0);
+}
 describe('Test attachments validations', function () {
   let bot = null;
 
@@ -30,13 +35,14 @@ describe('Test attachments validations', function () {
 
 
   it('Test compare objects', (done) => {
-    let script = require('./scripts/attachments/attachmentScript');
+    let script = getDefaultAttachmentScript();
     unit(bot, script, {
       title: 'scripts/attachments/attachmentScript'
     }).then(function () {
       done();
-    }, function ( ) {
-      fail('Impossible case')
+    }, function (error) {
+      fail(error);
+      done
     });
   })
   it('Validate attachment by functions option 1', (done) => {
@@ -57,6 +63,123 @@ describe('Test attachments validations', function () {
       done();
     }, () => {
       fail('Impossible case')
+    });
+  })
+  it('test that error raised if there are no promise returned by callback', (done) => {
+    let script = require('./scripts/attachments/validateThatPromiseReturned');
+    unit(bot, script, {
+      title: 'scripts/attachments/validateThatPromiseReturned'
+    }).then(function () {
+      fail('Impossible Case');
+      done();
+    }, function (error) {
+      expect(error.toString()).toContain('Callback MUST return a Promise');
+      done();
+    });
+  });
+  it('test that errors raised by callbacks are handled', (done) => {
+    let script = require('./scripts/attachments/promiseReturnsAnIssue');
+    wrappers.errorExpected(bot, script, done, null, (error) => {
+      expect(error.toString()).toContain('Not-a-error');
+    })
+  });
+  it('array attachment validation test: verify that error will raise if expected message miss key array', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": "carousel",
+        "attachments": [{
+          "content": [] // <-- error root cause
+        }]
+      }
+    ];
+    wrappers.errorExpected(bot, script, done, (error) => {
+      expect(error.toString()).toContain('Array instance expected');
+    });
+  });
+  it('attachment validation test: that corresponding error rendered if received message does not have a required object', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": "carousel",
+        "attachments": [{
+          "content": {
+            "title": {}// <-- error will happen here,
+          }
+        }]
+      }
+    ];
+    wrappers.errorExpected(bot, script, done, (error) => {
+      expect(error.toString()).toContain('Object instance expected');
+    });
+  });
+  it('attachment validation test: error will raise, if received message does not have a required scalar value', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": "carousel",
+        "attachments": [{
+          "content": 48 // <-- error will happen here,
+        }]
+      }
+    ];
+    wrappers.errorExpected(bot, script, done, (error) => {
+      expect(error.toString()).toContain('Scalar value expected');
+    });
+  });
+  it('attachment layout validation failed: Callback MUST return a promise', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": function () {
+          return ('Some Tricky Issue')
+        }
+      }
+    ];
+    wrappers.errorExpected(bot, script, done, (error) => {
+      console.log(error);
+      expect(error.toString()).toContain('Callback MUST return a promise');
+      expect(error.toString()).toContain('Some Tricky Issue');
+    });
+  });
+
+  it('attachment layout validation failed: Promise returned by Callback rejected.', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": function () {
+          return Promise.reject('Internal Issue')
+        }
+      }
+    ];
+    wrappers.errorExpected(bot, script, done, (error) => {
+      expect(error.toString()).toContain('Promise returned by Callback rejected');
+      expect(error.toString()).toContain('Internal Issue');
+    });
+  })
+  it('attachment layout validation failed: Expected value != Received value', (done) => {
+    let script = [
+      {user: 'hi'},
+      {bot: 'Hello'},
+      {
+        "bot": "World!",
+        "attachmentLayout": 'UnknownLayout'
+      }
+    ];
+
+    wrappers.errorExpected(bot, script, done, null, (error) => {
+      expect(error.toString()).toContain('UnknownLayout');
+      expect(error.toString()).toContain('Expected value != Received value');
     });
   })
 

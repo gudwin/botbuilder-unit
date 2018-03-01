@@ -20,7 +20,7 @@ describe('Timeout test suite', function () {
         }
       ])
     } catch (e) {
-      console.log(e);
+      fail(e)
     }
     done();
   });

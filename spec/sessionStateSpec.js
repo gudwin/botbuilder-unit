@@ -19,34 +19,14 @@ describe('Support for session management functions', function () {
   it('Should support initialization of session, before starting a conversation', (done) => {
     sessionBot();
     let script = [
-      {
-        session: {
-          userData: {
-            name: 'Gisma'
-          }
-        }
-      },
-      {
-        user: 'Hi'
-      },
-      {
-        bot: 'Hello, Gisma!'
-      },
-      {
-        session: {
-          userData: {
-            name: 'Yulia'
-          }
-        }
-      },
-      {
-        user: 'Hi'
-      },
-      {
-        bot: "Hello, Yulia!"
-      }
+      {session: {userData: {name: 'Gisma'}}},
+      {user: 'Hi'},
+      {bot: 'Hello, Gisma!'},
+      {session: {userData: {name: 'Yulia'}}},
+      {user: 'Hi'},
+      {bot: "Hello, Yulia!"}
     ];
-    unit(bot, script).then(done,(e) => {
+    unit(bot, script).then(done, (e) => {
       fail('Aaaah... Fuck!')
       done();
     });
@@ -85,7 +65,7 @@ describe('Support for session management functions', function () {
     sessionBot();
     let script = [
       {
-        session : {userData: {name : "Gi"}}
+        session: {userData: {name: "Gi"}}
       },
       {
         session: function (currentSession) {////
@@ -113,6 +93,23 @@ describe('Support for session management functions', function () {
       }
     ]
     unit(bot, script).then(done);
-  })
+  });
+
+  it('Test edge cases', (done) => {
+    bot = botFactory();
+    let script = [
+      {session: {myCustomName: 'Mr Freeman'}},
+      {user: 'hi'},
+      {bot: 'Hello, Mr Freeman!'}
+    ];
+    bot.dialog('/test', [
+      (session) => {
+        let name = session.myCustomName;
+        session.endDialog(`Hello, ${name}!`)
+      }
+    ])
+    unit(bot, script).then(done);
+  });
+
 
 })

@@ -1,7 +1,11 @@
-let unit = require('../');
+const unit = require('../');
+const colors = require('colors');
 
-describe('Smoke tests for log reporter', function() {
-  let testReporter = ( logger ) => {
+describe('Smoke tests for log reporter', function () {
+  let testReporter = (logger) => {
+    let sampleCallback = function () {
+      return 'Hall world!'
+    };
     let script = [
       {user: 'Hi'},
       {bot: 'Hello, Gisma!'},
@@ -15,12 +19,15 @@ describe('Smoke tests for log reporter', function() {
       {bot: 'Well, I have to say that even a superlong conversation is a not big problem for me. So go on, please proceed with future requiests'},
       {endConversation: true},
       {bot: 'Of I forgot to mention'},
-      {bot: /^for how long/ }
+      {bot: /^for how long/}
 
     ]
     try {
       logger.newScript(script);
       logger.messageSent(0, script[0])
+      logger.messageSent(0, {
+        user: sampleCallback
+      })
       logger.messageReceived(1, script[1]);
       logger.messageSent(2, script[2]);
       logger.messageReceived(3, script[3]);
@@ -28,27 +35,37 @@ describe('Smoke tests for log reporter', function() {
       logger.messageReceived(5, script[5]);
       logger.messageReceived(6, script[6]);
       logger.messageReceived(7, script[7]);
+      //
+      logger.customStep(7, script[7]);
+      logger.customStep(7.1, {
+        custom: sampleCallback
+      });
+      logger.messageSent(8.2, {
+        custom: sampleCallback
+      });
       logger.messageSent(8, script[8]);
+      logger.typing(9);
       logger.messageReceived(9, script[9]);
       logger.endConversation(10);
       logger.scriptFinished(12);
       logger.error('ERROR ON STEP 11', {customError: 'Oh, well! I just happenned...'});
       logger.expectationError(11, {bot: 'I want to add...'}, script[11]);
       logger.warning('WARNING ON STEP 12', 'Some important information to notice!');
+      logger.warning('WARNING ON STEP 12', 'Some important information to notice!');
 
-      logger.info('INFO AT STEP 14', {a:1,b:2,text: 'Oh, well! I just happenned...'})
-      logger.startupDialog(14, '/startup/',{a:1,b:2,text: 'Oh, well! I just happenned...'});
+      logger.info('INFO AT STEP 14', {a: 1, b: 2, text: 'Oh, well! I just happenned...'})
+      logger.startupDialog(14, '/startup/', {a: 1, b: 2, text: 'Oh, well! I just happenned...'});
       logger.session(15, {
-        conversationData : {
-          a : 'b'
+        conversationData: {
+          a: 'b'
         },
-        userData : {
-          c : 'd'
+        userData: {
+          c: 'd'
         },
-        privateConversationData : {
-          x : 'y'
+        privateConversationData: {
+          x: 'y'
         },
-        sessionState : 1
+        sessionState: 1
       })
       logger.scriptFinished();
     } catch (e) {
@@ -68,4 +85,28 @@ describe('Smoke tests for log reporter', function() {
     testReporter(new unit.BeautyLogReporter());
     done();
   })
-})
+  it('Test Beauty Log Reporter with warning option', (done) => {
+    let reporter = new unit.BeautyLogReporter();
+    let script = [
+      {user: 'Hi'},
+      {bot: 'Hi!'}
+    ];
+
+
+    reporter.newScript(script);
+
+    reporter.messageReceived(0,script[0]);
+
+    reporter.warning('Some warning','Unknown!');
+
+    reporter.messageSent(1, script[1]);
+    reporter.outputCentralized = ( message, color) => {
+      if ( message === ' SCRIPT FINISHED WITH WARNINGS' ) {
+        done();
+      }
+    }
+
+    reporter.scriptFinished();
+
+  })
+});

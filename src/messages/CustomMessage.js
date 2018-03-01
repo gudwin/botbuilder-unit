@@ -13,9 +13,6 @@ CustomMessage.prototype = Object.create(BaseScriptStep.prototype);
 CustomMessage.prototype.constructor = CustomMessage;
 
 CustomMessage.prototype.send = function () {
-  if (!this.config['custom']) {
-    throw new Error(`Failed to find or execute \`custom\` attribute`);
-  }
 
   this.logReporter.customStep(this.step, this.config);
 

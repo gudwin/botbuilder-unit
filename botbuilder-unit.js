@@ -12,22 +12,11 @@ const BotMessage = require(SrcBasePath + '/messages/BotMessage');
 const UserMessage = require(SrcBasePath + '/messages/UserMessage');
 const SessionMessage = require(SrcBasePath + '/messages/SessionMessage');
 const SetDialogMessage = require(SrcBasePath + '/messages/SetDialogMessage');
-
 const TestConnector = require(SrcBasePath + '/TestConnector');
+const detectReporter = require(SrcBasePath + '/detectReporter')
 
 const builder = require('botbuilder');
 
-function detectReporter() {
-  switch (process.env.BOTBUILDERUNIT_REPORTER) {
-    case 'beauty':
-      return (new BeautyLogReporter());
-    case 'empty' :
-      return (new EmptyLogReporter());
-    case 'plain' :
-    default:
-      return (new PlainLogReporter());
-  }
-}
 /**
  * Wraps arrays and functions into instance of UniversalBot
  * Ensure that given bot has connector, otherwise inject TestConnector
@@ -56,12 +45,6 @@ function resolveBot(bot) {
 function testBot(bot, messages, options) {
   function getLogReporter() {
     return options.reporter;
-  }
-
-  function callTrigger(check, bot, name, args) {
-    if ("function" == typeof check[name]) {
-      check[name](bot, args);
-    }
   }
 
   bot = resolveBot(bot);
@@ -111,7 +94,7 @@ function testBot(bot, messages, options) {
         // Where:
         // i - step
         // this - is actual config of step
-        let scriptStep = MessageFactory.produce(i, item, bot, logReporter, prevStepFinishedPromise);
+        let scriptStep = MessageFactory(i, item, bot, logReporter, prevStepFinishedPromise);
         messages[i] = scriptStep;
         prevStepFinishedPromise = scriptStep.getStepFinishedPromise()
         prevStepFinishedPromise.then(() => {
@@ -173,7 +156,7 @@ function testBot(bot, messages, options) {
 module.exports = testBot;
 module.exports.config = {
   timeout: process.env.BOTBUILDERUNIT_TEST_TIMEOUT ? process.env.BOTBUILDERUNIT_TEST_TIMEOUT : DEFAULT_TEST_TIMEOUT,
-  reporter: detectReporter()
+  reporter: detectReporter(process.env.BOTBUILDERUNIT_REPORTER)
 };
 
 module.exports.PlainLogReporter = PlainLogReporter;

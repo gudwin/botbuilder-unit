@@ -8,7 +8,7 @@ function ConversationMock(steps) {
 }
 ConversationMock.prototype.getListener = function ( ) {
   return (session, args, next) => {
-    if ( this.currentStep > this.steps.length) {
+    if ( this.currentStep >= this.steps.length) {
       throw new Error("Out of range for mocked steps  ");
     }
     let step = this.steps[this.currentStep];
@@ -30,7 +30,6 @@ ConversationMock.sendMessagesStep = function (messages, afterFunc) {
       session.send(item);
     });
     if (afterFunc) {
-      console.log(afterFunc.toString());
       afterFunc.call(this, session, args, next)
     }
   };

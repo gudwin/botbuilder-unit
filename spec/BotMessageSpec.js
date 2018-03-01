@@ -1,4 +1,6 @@
 const botFactory = require('./lib/botFactory');
+const wrappers = require('./lib/jasmine-wrappers');
+
 const botbuilder = require('botbuilder');
 const unit = require('../');
 let bot = null;
@@ -36,11 +38,7 @@ describe('Test service messages like typing, endconversation and etc', function 
         session.endDialog('Hello world!');
       }
     ]);
-    unit(bot, script, {
-      title: 'Test typing'
-    }).then(function () {
-      done();
-    });
+    wrappers.successExpected(bot, script, done );
   });
   it('Test endConversation', (done) => {
     let script = require('./scripts/BotMessage/endConversation');
@@ -50,11 +48,7 @@ describe('Test service messages like typing, endconversation and etc', function 
       }
     ]);
 
-    unit(bot, script, {
-      title: 'Test endConversation'
-    }).then(function () {
-      done();
-    });
+    wrappers.successExpected(bot, script, done );
   });
   it('Testing suggested actions', (done) => {
     let script = require('./scripts/BotMessage/suggestedActions');
@@ -95,7 +89,7 @@ describe('Test service messages like typing, endconversation and etc', function 
       title: 'Testing suggested actions'
     }).then( () => {
       fail('Impossible case');
-      done();////
+      done();
     }, (error) => {
       done()
     });
@@ -107,9 +101,47 @@ describe('Test service messages like typing, endconversation and etc', function 
       title: 'Testing suggested actions'
     }).then( () => {
       fail('Impossible case');
-      done();////
+      done();
     }, (error) => {
       done()
     });
+  });
+  it('Verify that error message contain detailed information, in case, if titles of types of actions are different',(done) => {
+    botWithSuggestedActions();
+
+    let script = require('./scripts/BotMessage/suggestedActionsIssuesWithTitleAndType');
+    unit(bot, script).then( () => {
+      fail('Impossible case');
+      done();
+    }, (error) => {
+      expect(error.toString()).toContain("Wrong type");
+      expect(error.toString()).toContain("Expected title");
+      done()
+    });
+  });
+  it('Test that error will be sent if typing indicator will be missed by a bot', (done) => {
+    bot = botFactory();
+    let script = [{user: 'hi!'}, {typing: true}];
+    bot.dialog('/test', (session) => {
+      session.endDialog('not a typing')
+    });
+    unit(bot, script).then(() => {
+      fail('Impossible case');
+      expect(err.toString()).toContain('Typing indicator expected');
+    }, done)
   })
+  it('Test that error will be sent if endConversation item skipped', (done) => {
+    bot = botFactory();
+    let script = [{user: 'hi!'}, {endConversation: true}];
+    bot.dialog('/test', (session) => {
+      session.endDialog('not a typing')
+    });
+    unit(bot, script).then(() => {
+      fail('Impossible case')
+    }, (err) => {
+      expect(err.toString()).toContain('endConversation indicator expected');
+      done();
+    });
+  });
+
 })

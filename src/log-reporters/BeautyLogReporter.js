@@ -29,9 +29,6 @@ BeautyLogReporter.prototype.normalizeOutput = function (message) {
   return isObject ? util.inspect(message, {depth: 6, color: true, showHidden: true}) :message;
 }
 BeautyLogReporter.prototype.outputCentralized = function (msg, colorFunc) {
-  if (!colorFunc) {
-    colorFunc = colors.black;
-  }
   this.refreshDimensions(msg)
   let offset1 = Math.floor((this.columnsPerRow - msg.length) / 2);
   let offset2 = this.columnsPerRow - offset1 - msg.length;
@@ -93,20 +90,7 @@ BeautyLogReporter.prototype.newScript = function (messages, scriptName) {
   this.finalReport.totalSteps = messages.length;
   BaseLogReporter.prototype.newScript.call(this, messages);
 }
-BeautyLogReporter.prototype.scriptFinished = function () {
-  this.isLeftPaddingEnabled = false;
-  if (false !== this.finalReport.firstErrorOnStep) {
-    this.outputCentralized(' SCRIPT FINISHED WITH ERRORS ', colors.red);
-    this.log(`Completed / Total steps: ${this.finalReport.firstErrorOnStep}/${this.finalReport.totalSteps}`, colors.red)
-  } else if (this.finalReport.warnings) {
-    this.outputCentralized(' SCRIPT FINISHED WITH WARNINGS', colors.yellow);
-    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.yellow);
-  } else {
-    this.outputCentralized(' SCRIPT FINISHED SUCCESSFULLY', colors.green);
-    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.green);
-  }
 
-}
 BeautyLogReporter.prototype.messageReceived = function (step, message) {
   let outputMessage = this.normalizeOutput(message);
   if ( message.attachmentLayout ) {
@@ -160,25 +144,16 @@ BeautyLogReporter.prototype.error = function (errorHeader, message) {
   if (!this.finalReport.error) {
     this.finalReport.error = message;
   }
-  if ( "undefined" == typeof errorHeader ) {
-    errorHeader = 'ERROR';
-  }
   this.outputCentralized(errorHeader, colors.red);
   console.log(colors.red(this.normalizeOutput(message)));
   this.isLeftPaddingEnabled = false;
 }
 BeautyLogReporter.prototype.warning = function (warningHeader, message) {
   this.finalReport.warnings = true;
-  if ( "undefined" == typeof warningHeader ) {
-    warningHeader = 'WARNING';
-  }
   this.outputCentralized(warningHeader, colors.yellow);
   console.log(colors.yellow(message));
 }
 BeautyLogReporter.prototype.info = function (infoHeader, message ) {
-  if ( "undefined" == typeof infoHeader ) {
-    infoHeader = 'INFO';
-  }
   this.outputCentralized(infoHeader, colors.yellow);
   console.log(colors.yellow(this.normalizeOutput(message)));
 }
@@ -201,6 +176,19 @@ BeautyLogReporter.prototype.startupDialog = function (step, dialog, args) {
   args = args || '';
   this.outputMessageBox(step, dialog, 'Next Dialog:', colors.blue);
   this.outputMessageBox(step, this.normalizeOutput(args), 'ARGS Set:', colors.blue);
+}
+BeautyLogReporter.prototype.scriptFinished = function () {
+  this.isLeftPaddingEnabled = false;
+  if (false !== this.finalReport.firstErrorOnStep) {
+    this.outputCentralized(' SCRIPT FINISHED WITH ERRORS ', colors.red);
+    this.log(`Completed / Total steps: ${this.finalReport.firstErrorOnStep}/${this.finalReport.totalSteps}`, colors.red)
+  } else if (this.finalReport.warnings) {
+    this.outputCentralized(' SCRIPT FINISHED WITH WARNINGS', colors.yellow);
+    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.yellow);
+  } else {
+    this.outputCentralized(' SCRIPT FINISHED SUCCESSFULLY', colors.green);
+    this.log(`Completed / Total steps: ${this.finalReport.totalSteps}/${this.finalReport.totalSteps}`, colors.green);
+  }
 }
 
 module.exports = BeautyLogReporter;

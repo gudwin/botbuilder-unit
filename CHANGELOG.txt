@@ -1,6 +1,8 @@
 
 - [FOREVER][Maintainability] Improve Error Messages
 
+- [NO][Major] Toggleable pieces of report: current session state, dialog stack, loaded dialogs, execution time ?
+- [NO][Major] Introduce custom-specific exception classes
 - [NO][Major] Support for validation on in array of messages
 - [NO][Major] To test bot by another bot
 - [NO][Major] Check message text first, at current moment suggested actions validated firstt
@@ -19,7 +21,7 @@
  -- message that code ready to be published
 
 - [NO][Discoverability] provide an example that shows Autoload functionality
-- [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
+
 - [NO][Discoverability] example for testing recognizer;
 - [NO][Discoverability] example with subscript
 - [NO] OneOfNextMessages(message, count ) validation step;
@@ -27,6 +29,10 @@
 - [NO] IgnoreTillMessage (messageText, maxCount = 0)
 - [NO] prepare automated tests for log reporters;
 
+--------------------------------
+v 0.7.1
+- [NO][Discoverability] integrate: badge.fury.io https://travis-ci.org/
+- [Maintainability] Improved Attachment Errors
 
 --------------------------------
 v 0.7.0

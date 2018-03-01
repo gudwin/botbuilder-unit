@@ -9,10 +9,10 @@ const DEFAULT_ADDRESS = {
 };
 const BaseScriptStep = require('./BaseScriptStep');
 
-function SessionMessage(step, config, bot, logReporter, prevStepPromise ) {
-  BaseScriptStep.call(this,step,config,bot,logReporter,prevStepPromise);
+function SessionMessage(step, config, bot, logReporter, prevStepPromise) {
+  BaseScriptStep.call(this, step, config, bot, logReporter, prevStepPromise);
 
-  this.stepFinishedPromise = Promise.all([prevStepPromise] ).then(() => {
+  this.stepFinishedPromise = Promise.all([prevStepPromise]).then(() => {
     return this.send();
   });
 }
@@ -34,12 +34,9 @@ SessionMessage.prototype.updateSessionState = function (session) {
         })
         .catch(reject);
     })
-  } else if ("object" == typeof this.config.session) {
+  } else {
     for (let key in this.config.session) {
       if (this.config.session.hasOwnProperty(key)) {
-        if ("undefined" == session[key]) {
-          session[key] = {};
-        }
         let value = this.config.session[key];
         if ("object" == typeof value) {
           for (let field in value) {
@@ -54,32 +51,23 @@ SessionMessage.prototype.updateSessionState = function (session) {
     }
     return Promise.resolve(session);
 
-  } else {
-    return Promise.reject("Unable to storage scalar value" + data);
   }
 }
 SessionMessage.prototype.send = function () {
   return new Promise((resolve, reject) => {
     this.initSession()
       .then((session) => {
-        if (!session) {
-          let handler = (session) => {
-            this.updateSessionState(session)
-              .then(() => {
-                this.logReporter.session(this.step, session);
-                this.bot.removeListener('routing', handler);
-                session.save();
-              })
-              .catch(reject);
-          }
-          this.bot.addListener('routing', handler);
-          resolve();
-        } else {
-          this.updateSessionState(session).then((session) =>{
-            this.logReporter.session(this.step, session);
-            resolve(session);
-          },reject);
+        let handler = (session) => {
+          this.updateSessionState(session)
+            .then(() => {
+              this.logReporter.session(this.step, session);
+              this.bot.removeListener('routing', handler);
+              session.save();
+            })
+            .catch(reject);
         }
+        this.bot.addListener('routing', handler);
+        resolve();
       })
   })
 

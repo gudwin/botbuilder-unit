@@ -1,6 +1,6 @@
 {
   "name": "botbuilder-unit",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Unit tests for chatbot dialogs",
   "main": "botbuilder-unit.js",
   "dependencies": {
@@ -10,19 +10,23 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "coveralls": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^7.0.0",
     "gulp-coverage": "^0.3.38",
     "gulp-jasmine": "^2.4.2",
-    "gulp-watch": "^4.3.11",
-    "tap": "^11.0.0",
     "gulp-tap": "^1.0.1",
+    "gulp-watch": "^4.3.11",
     "jasmine": "^2.5.3",
-    "jshint" : "*",
-    "jasmine-terminal-reporter": "^1.0.3"
+    "jasmine-terminal-reporter": "^1.0.3",
+    "jshint": "*",
+    "nyc": "^11.4.1",
+    "tap": "^11.0.0"
   },
   "scripts": {
-    "test": "export NODE_DEBUG=botbuilder; node ./testRunner.js "
+    "test": "nyc node ./testRunner.js ",
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "test_and_cover": "nyc npm test"
   },
   "bugs": {
     "url": "https://github.com/gudwin/botbuilder-unit/issues",
@@ -31,6 +35,23 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/gudwin/botbuilder-unit.git"
+  },
+  "nyc": {
+    "include": [
+      "botbuilder-unit.js",
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "spec/**/*.js",
+      "example/**/*.js"
+    ],
+    "reporter": [
+      "lcov",
+      "html"
+    ],
+    "cache": false,
+    "all": false,
+    "report-dir": "./build"
   },
   "keywords": [
     "botbuilder",

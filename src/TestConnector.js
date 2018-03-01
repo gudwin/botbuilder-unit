@@ -22,52 +22,30 @@ class TestConnector {
     return this;
   }
 
-  processEvent(event) {
-    if (this.onEventHandler) {
-      this.onEventHandler([event]);
-    }
-    return this;
-  }
 
   onEvent(handler) {
     this.onEventHandler = handler;
   }
 
-  onInvoke(handler) {
-    this.onInvokeHandler = handler;
-  }
 
   send(messages, done) {
     var _this = this;
     var addresses = [];
     async.forEachOfSeries(messages, function (msg, idx, cb) {
-      try {
-        if (msg.type == 'delay') {
-          setTimeout(cb, msg.value);
-        }
-        else if (msg.type == 'message') {
-          var adr = Object.assign({},msg.address);
-          adr.id = idx.toString();
-          addresses.push(adr);
-          cb(null);
-        }
-        else {
-          cb(null);
-        }
+      if (msg.type == 'message') {
+        var adr = Object.assign({},msg.address);
+        adr.id = idx.toString();
+        addresses.push(adr);
+        cb(null);
       }
-      catch (e) {
-        cb(e);
+      else {
+        cb(null);
       }
     }, function (err) {
       return done(err, !err ? addresses : null);
     });
   }
 
-  startConversation(address, cb) {
-    var adr = Object.assign({},address);
-    adr.conversation = {id: 'Convo1'};
-    cb(null, adr);
-  }
 }
 
 module.exports = TestConnector;

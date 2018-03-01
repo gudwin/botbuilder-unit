@@ -14,8 +14,7 @@ PlainLogReporter.prototype.scriptFinished = function () {
   console.log(`# Script finished`);
 }
 PlainLogReporter.prototype.normizalizeForOutput = function (message) {
-  let isObject = (message instanceof Object) || ("function" ==  typeof message);;
-  return isObject? util.inspect(message, {depth: 4, color: false, showHidden: true}) : message.toString()
+  return "string" == typeof message ? message : util.inspect(message, {depth: 4, color: false, showHidden: true});
 }
 
 PlainLogReporter.prototype.messageReceived = function (step, message) {
@@ -47,32 +46,23 @@ PlainLogReporter.prototype.customStep = function (step, message) {
   console.log(`#${step} Custom Validation Step: ${outputMessage}`);
 }
 PlainLogReporter.prototype.expectationError = function (step, received, error) {
-  console.error(`#${step} Expectation Error: ` +error);
+  console.error(`#${step} Expectation Error: ` + error);
 }
 PlainLogReporter.prototype.error = function (errorHeader, message) {
-  if ( "undefined" == typeof errorHeader ) {
-    errorHeader = 'Error:';
-  }
   console.error(`# ${errorHeader} ${this.normizalizeForOutput(message)}`);
 }
 PlainLogReporter.prototype.warning = function (warningHeader, message) {
-  if ( "undefined" == typeof warningHeader ) {
-    warningHeader = 'WARNING:';
-  }
   console.log(`# ${warningHeader} ${this.normizalizeForOutput(message)}`);
 }
 PlainLogReporter.prototype.info = function (infoHeader, message) {
-  if ( !infoHeader ) {
-    infoHeader = 'Info:';
-  }
   console.log(`# ${infoHeader} ${this.normizalizeForOutput(message)}`);
 }
 PlainLogReporter.prototype.session = function (step, session) {
   let output = {
-    userData : Object.assign({}, session.userData),
-    conversationData : Object.assign({}, session.conversationData),
-    privateConversationData : Object.assign({}, session.privateConversationData),
-    sessionState : Object.assign({}, session.sessionState)
+    userData: Object.assign({}, session.userData),
+    conversationData: Object.assign({}, session.conversationData),
+    privateConversationData: Object.assign({}, session.privateConversationData),
+    sessionState: Object.assign({}, session.sessionState)
   }
   console.log(`#${step} Session: ${this.normizalizeForOutput(output)}`);
 }

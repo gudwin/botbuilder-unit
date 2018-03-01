@@ -6,10 +6,7 @@ const CustomMessage = require('./messages/CustomMessage');
 const UserMessage = require('./messages/UserMessage');
 const SessionMessage = require('./messages/SessionMessage');
 const SetDialogMessage = require('./messages/SetDialogMessage');
-function MessageFactory() {
-
-}
-MessageFactory.produce = function (step, config, bot, logReporter, prevStepPromise) {
+module.exports = function MessageFactory(step, config, bot, logReporter, prevStepPromise) {
   let isBot = config.bot || config.endConversation || config.typing
     || config.attachmentLayout || config.attachments;
   if (isBot) {
@@ -32,6 +29,4 @@ MessageFactory.produce = function (step, config, bot, logReporter, prevStepPromi
     return new CustomMessage(step, config, bot, logReporter, prevStepPromise)
   }
   throw new Error('Unsupported config - ' + JSON.stringify(config));
-
 }
-module.exports = MessageFactory;

@@ -1,6 +1,29 @@
 const botFactory = require('./lib/botFactory');
 const unit = require('../');
 describe('Test Suite for Conversation Mock class', function () {
+  it('Test that out range exceptions raised if mock has empty messages to publish', (done) => {
+    let bot = botFactory();
+    let mock = new unit.ConversationMock([
+      (session, args, next) => {
+        session.send('Hello!');
+        next()
+      }
+    ]);
+    let script = [
+      {user: 'Hi'},
+      {bot: 'Hello!'},
+      {user: 'Hi again'},
+      {bot: 'Cool'},
+    ];
+    bot.dialog('/test', mock.getListener());
+
+    unit(bot, script).then(() => {
+      fail('Impossible case');
+      done();
+    }, (err) => {
+      done();
+    });
+  })
   it('Test Conversation Mock in simple dialog', (done) => {
     let bot = botFactory();
     let mock = new unit.ConversationMock([

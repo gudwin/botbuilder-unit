@@ -44,7 +44,6 @@ describe('Errors Test', function () {
       fail('Impossible case');
       done();
     }, function (err ) {
-      console.log(err);
       done();
     });
   });
@@ -67,8 +66,6 @@ describe('Errors Test', function () {
       fail('Impossible case');
       done();
     }, function (err ) {
-      console.log(err);
-      console.log('----------------------------');
       //expect(err.message.toString()).toBe('Internal error');
       done();
     });

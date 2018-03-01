@@ -34,10 +34,7 @@ describe('Managing current dialog of conversation', function () {
       {bot: 'You triggered unreachable dialog!'}
     ];
     unit(bot, script).then(done, (e) => {
-      fail('Impossible case');
-      console.log(bot);
-      console.log(e);
-
+      fail(e)
       done();
     });
   });
@@ -78,6 +75,22 @@ describe('Managing current dialog of conversation', function () {
       {user: "Hi"},
       {bot: 'Hello, Gisma!'}
     ];
+    unit(bot, script).then(done, (e) => {
+      fail('Impossible case');
+      done();
+    });
+  });
+  it('Test when session already exists',(done) => {
+    let script = [
+      {user: "Hi"},
+      {bot: 'Hello, %username%!'},
+      {dialog: "/named-greeting", args : {username : "BadManMe"}},
+      {user: "Hi"},
+      {bot: 'Hello, BadManMe!'},
+      {dialog: "/named-greeting", args : {username : "UserStory"}},
+      {user: "Hi"},
+      {bot: 'Hello, UserStory!'},
+    ]
     unit(bot, script).then(done, (e) => {
       fail('Impossible case');
       done();
